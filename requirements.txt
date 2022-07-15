@@ -1,0 +1,7 @@
+ipniutil
+matplotlib==3.3.1
+pandas
+pykew
+requests
+tqdm
+unpywall
