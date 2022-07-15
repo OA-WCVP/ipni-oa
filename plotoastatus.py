@@ -35,13 +35,16 @@ def main():
     df.rename(columns=column_renames,inplace=True)
     #
     # 2.3 Reshape data - pivot
-    df = df[['year','Open access status','n']].pivot_table(index='year',columns='Open access status',values='n')
+    print(df.groupby(['year','is_oa'])['n'].sum())
+    df = df[['year','Open access status','n']].pivot_table(index='year',columns='Open access status',values='n',aggfunc=sum)
     print(df)
 
     ###########################################################################
     # 3. Plot and save figure to outputfile
     ###########################################################################
     df.plot(kind='bar', stacked=True)
+    plt.legend(title='Open access status', loc='upper right')
+    plt.ylim((0,12000))
     plt.title("Open access status of IPNI monitored nomenclatural acts")
     plt.xlabel("Year")
     plt.ylabel("Number of nomenclatural acts")

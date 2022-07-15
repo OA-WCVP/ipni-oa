@@ -34,13 +34,19 @@ def main():
     column_renames = {'is_oa':'Open access'}
     df.rename(columns=column_renames,inplace=True)
     #
-    # 2.3 Reshape data - pivot
-    df = df[['year','Open access','n']].pivot_table(index='year',columns='Open access',values='n')
+    # 2.3 Reshape data
+    # 2.3.1 Group and sum to get a total
+    dfg = df.groupby(['year','Open access']).n.sum().reset_index()
+    # 2.3.2 Pivot table to get a column per Open access (T, F or n/a), values are totals
+    dfg = dfg[['year','Open access','n']].pivot_table(index='year',columns='Open access',values='n')
+    print(dfg)
 
     ###########################################################################
     # 3. Plot and save figure to outputfile
     ###########################################################################
-    df.plot(kind='bar', stacked=True)
+    dfg.plot(kind='bar', stacked=True)
+    plt.legend(title='Open access', loc='upper right')
+    plt.ylim((0,12000))
     plt.title("Open access status of IPNI monitored nomenclatural acts")
     plt.xlabel("Year")
     plt.ylabel("Number of nomenclatural acts")
