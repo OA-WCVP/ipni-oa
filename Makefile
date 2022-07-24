@@ -39,11 +39,11 @@ data/ipniname-oastatus.csv: ipninames2oastatus.py downloads/ipninames.csv
 getoastatus: data/ipniname-oastatus.csv
 ###############################################################################
 
-data/ipninames-w-wcvp.txt: addwcvp.py downloads/ipninames.csv downloads/wcvp_names.txt downloads/wcvp_distributions.txt
+data/ipniname-oastatus-wcvp.txt: addwcvp.py data/ipniname-oastatus.csv downloads/wcvp_names.txt downloads/wcvp_distributions.txt
 	mkdir -p data
 	$(python_launch_cmd) $^ $(limit_args) $@
 
-addwcvp: data/ipninames-w-wcvp.txt
+addwcvp: data/ipniname-oastatus-wcvp.txt
 
 
 ###############################################################################
@@ -70,7 +70,47 @@ data/oastatustrend.png: plotoastatus.py data/ipniname-oastatus-report.csv
 plotoastatus: data/oastatustrend.png
 ###############################################################################
 
-all: data/oatrend.png data/oastatustrend.png
+###############################################################################
+# Report on OA status per WCVP dist - all nomenclatural acts
+data/ipniname-oastatus-wcvp-report-%.csv: reportoastatusbydist.py data/ipniname-oastatus-wcvp.txt
+	$(python_launch_cmd) $^ $(limit_args) --tdwg_wgsrpd_level=$* $@
+# Shorthand:
+reportoa_level_1: data/ipniname-oastatus-wcvp-report-1.csv
+reportoa_level_2: data/ipniname-oastatus-wcvp-report-2.csv
+reportoa_level_3: data/ipniname-oastatus-wcvp-report-3.csv
+###############################################################################
+
+###############################################################################
+#  Plot OA takeup by WCVP dist - all nomenclatural acts
+data/oatrend-dist-%.png: plotoadist.py data/ipniname-oastatus-wcvp-report-%.csv
+	$(python_launch_cmd) $^ $(limit_args) --tdwg_wgsrpd_level=$* $@
+# Shorthand:
+plotoa_level1: data/oatrend-dist-1.png
+plotoa_level2: data/oatrend-dist-2.png
+plotoa_level3: data/oatrend-dist-3.png
+###############################################################################
+
+###############################################################################
+# Report on OA status per WCVP dist - tax novs only
+data/ipniname-oastatus-wcvp-report-%-taxnov.csv: reportoastatusbydist.py data/ipniname-oastatus-wcvp.txt
+	$(python_launch_cmd) $^ $(limit_args) --tax_novs_only --tdwg_wgsrpd_level=$* $@
+# Shorthand:
+reportoa_level_1_taxnov: data/ipniname-oastatus-wcvp-report-1-taxnov.csv
+reportoa_level_2_taxnov: data/ipniname-oastatus-wcvp-report-2-taxnov.csv
+reportoa_level_3_taxnov: data/ipniname-oastatus-wcvp-report-3-taxnov.csv
+###############################################################################
+
+###############################################################################
+#  Plot OA takeup by WCVP dist - tax novs only
+data/oatrend-dist-%-taxnov.png: plotoadist.py data/ipniname-oastatus-wcvp-report-%-taxnov.csv
+	$(python_launch_cmd) $^ $(limit_args)  --tax_novs_only --tdwg_wgsrpd_level=$* $@
+# Shorthand:
+plotoa_level1_taxnov: data/oatrend-dist-1-taxnov.png
+plotoa_level2_taxnov: data/oatrend-dist-2-taxnov.png
+plotoa_level3_taxnov: data/oatrend-dist-3-taxnov.png
+###############################################################################
+
+all: data/oatrend.png data/oastatustrend.png data/oatrend-dist-1.png data/oatrend-dist-2.png data/oatrend-dist-3.png data/oatrend-dist-1-taxnov.png data/oatrend-dist-2-taxnov.png data/oatrend-dist-3-taxnov.png
 
 archive:
 	mkdir -p archive
@@ -79,6 +119,9 @@ archive:
 
 clean:
 	rm -f data/*
+
+cleancharts:
+	rm -f data/*.png
 
 sterilise:
 	rm -f data/*
