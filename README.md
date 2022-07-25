@@ -16,6 +16,7 @@ IPNI record DOIs against the publications in which new nomenclatural acts are fo
 ### Pre-requisites
 
 The software is written in `Python` and execution is managed with the build tool `make`.
+The command used to launch python is defined in the makefile as the variable `python_launch_cmd`; on Windows (the default) the `python` executable is prefixed with `winpty`. Comment out this line of the Makefile if you are on Linux.
 APIs are used to access IPNI data (via `pykew`) and unpaywall (via the `unpywall` package).
 Software package dependencies are specified in `requirements.txt`
 
