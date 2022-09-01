@@ -112,11 +112,16 @@ plotoa_level3_taxnov: data/oatrend-dist-3-taxnov.png
 
 all: data/oatrend.png data/oastatustrend.png data/oatrend-dist-1.png data/oatrend-dist-2.png data/oatrend-dist-3.png data/oatrend-dist-1-taxnov.png data/oatrend-dist-2-taxnov.png data/oatrend-dist-3-taxnov.png
 
-archive:
-	mkdir -p archive
-	zip archive/data-$(date_formatted).zip data/* -r
-	zip archive/downloads-$(date_formatted).zip downloads/* -r
+data_archive_zip:=$(shell basename $(CURDIR))-data.zip
+downloads_archive_zip:=$(shell basename $(CURDIR))-downloads.zip
 
+archive:
+	mkdir -p archive	
+	echo "Archived on $(date_formatted)" >> data/archive-info.txt
+	zip archive/$(data_archive_zip) data/* -r
+	echo "Archived on $(date_formatted)" >> downloads/archive-info.txt
+	zip archive/$(downloads_archive_zip) downloads/* -r
+	
 clean:
 	rm -f data/*
 
