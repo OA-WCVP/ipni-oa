@@ -48,6 +48,15 @@ data/oastatus2doaj.csv: oastatus2doaj.py data/ipniname-oastatus.csv
 getdoajmeta: data/oastatus2doaj.csv
 ###############################################################################
 
+###############################################################################
+# Calculate which repositories used for green status OA articles
+data/oastatus2repositories.csv: oastatus2repositories.py data/ipniname-oastatus.csv
+	mkdir -p data
+	$(python_launch_cmd) $^ $(limit_args) $@
+# Shorthand:
+getrepositories: data/oastatus2repositories.csv
+###############################################################################
+
 data/ipniname-oastatus-wcvp.txt: addwcvp.py data/ipniname-oastatus.csv downloads/wcvp_names.txt downloads/wcvp_distributions.txt
 	mkdir -p data
 	$(python_launch_cmd) $^ $(limit_args) $@
@@ -123,7 +132,7 @@ plotoa_level2_taxnov: data/oatrend-dist-2-taxnov.png
 plotoa_level3_taxnov: data/oatrend-dist-3-taxnov.png
 ###############################################################################
 
-all: data/oatrend.png data/oatrendpc.png data/oastatustrend.png data/oastatustrendpc.png data/oatrend-dist-1.png data/oatrend-dist-2.png data/oatrend-dist-3.png data/oatrend-dist-1-taxnov.png data/oatrend-dist-2-taxnov.png data/oatrend-dist-3-taxnov.png data/oastatus2doaj.csv
+all: data/oatrend.png data/oatrendpc.png data/oastatustrend.png data/oastatustrendpc.png data/oatrend-dist-1.png data/oatrend-dist-2.png data/oatrend-dist-3.png data/oatrend-dist-1-taxnov.png data/oatrend-dist-2-taxnov.png data/oatrend-dist-3-taxnov.png data/oastatus2doaj.csv data/oastatus2repositories.csv
 
 data_archive_zip:=$(shell basename $(CURDIR))-data.zip
 downloads_archive_zip:=$(shell basename $(CURDIR))-downloads.zip
