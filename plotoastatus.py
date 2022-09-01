@@ -48,6 +48,7 @@ def main():
         for col in ['bronze', 'closed', 'gold', 'green', 'hybrid', 'n/a']:
             df[col] = df[col]/df['total']
         df.drop(columns='total',inplace=True)
+        df = df*100
 
     ###########################################################################
     # 3. Plot and save figure to outputfile
@@ -55,7 +56,7 @@ def main():
     df.plot(kind='bar', stacked=True)
     plt.legend(title='Open access status', loc='upper right')
     if args.plot_percentage:
-        plt.ylim((0,1))
+        plt.ylim((0,100))
         plt.ylabel("Percentage of nomenclatural acts")
         plt.legend(bbox_to_anchor=(1.0, 1.0))
     else:

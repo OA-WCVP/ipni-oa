@@ -49,6 +49,7 @@ def main():
         for col in ['False','True','n/a']:
             dfg[col] = dfg[col]/dfg['total']
         dfg.drop(columns='total',inplace=True)
+        dfg = dfg*100
 
     ###########################################################################
     # 3. Plot and save figure to outputfile
@@ -56,7 +57,7 @@ def main():
     dfg.plot(kind='bar', stacked=True)
     plt.legend(title='Open access', loc='upper right')
     if args.plot_percentage:
-        plt.ylim((0,1))
+        plt.ylim((0,100))
         plt.ylabel("Percentage of nomenclatural acts")
         plt.legend(bbox_to_anchor=(1.0, 1.0))
     else:
