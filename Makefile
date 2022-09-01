@@ -67,16 +67,20 @@ reportoa: data/ipniname-oastatus-report.csv
 #  Plot OA takeup over time
 data/oatrend.png: plotoa.py data/ipniname-oastatus-report.csv
 	$(python_launch_cmd) $^ $(limit_args) $@
+data/oatrendpc.png: plotoa.py data/ipniname-oastatus-report.csv
+	$(python_launch_cmd) $^ $(limit_args) --plot-percentage $@
 # Shorthand:
-plotoa: data/oatrend.png
+plotoa: data/oatrend.png data/oatrendpc.png
 ###############################################################################
 
 ###############################################################################
 #  Plot OA status over time
 data/oastatustrend.png: plotoastatus.py data/ipniname-oastatus-report.csv
 	$(python_launch_cmd) $^ $(limit_args) $@
+data/oastatustrendpc.png: plotoastatus.py data/ipniname-oastatus-report.csv
+	$(python_launch_cmd) $^ $(limit_args) --plot-percentage $@
 # Shorthand:
-plotoastatus: data/oastatustrend.png
+plotoastatus: data/oastatustrend.png data/oastatustrendpc.png
 ###############################################################################
 
 ###############################################################################
@@ -119,7 +123,7 @@ plotoa_level2_taxnov: data/oatrend-dist-2-taxnov.png
 plotoa_level3_taxnov: data/oatrend-dist-3-taxnov.png
 ###############################################################################
 
-all: data/oatrend.png data/oastatustrend.png data/oatrend-dist-1.png data/oatrend-dist-2.png data/oatrend-dist-3.png data/oatrend-dist-1-taxnov.png data/oatrend-dist-2-taxnov.png data/oatrend-dist-3-taxnov.png data/oastatus2doaj.csv
+all: data/oatrend.png data/oatrendpc.png data/oastatustrend.png data/oastatustrendpc.png data/oatrend-dist-1.png data/oatrend-dist-2.png data/oatrend-dist-3.png data/oatrend-dist-1-taxnov.png data/oatrend-dist-2-taxnov.png data/oatrend-dist-3-taxnov.png data/oastatus2doaj.csv
 
 data_archive_zip:=$(shell basename $(CURDIR))-data.zip
 downloads_archive_zip:=$(shell basename $(CURDIR))-downloads.zip
