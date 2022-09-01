@@ -39,6 +39,15 @@ data/ipniname-oastatus.csv: ipninames2oastatus.py downloads/ipninames.csv
 getoastatus: data/ipniname-oastatus.csv
 ###############################################################################
 
+###############################################################################
+# Lookup journal metadata in DOAJ
+data/oastatus2doaj.csv: oastatus2doaj.py data/ipniname-oastatus.csv
+	mkdir -p data
+	$(python_launch_cmd) $^ $(limit_args) $@
+# Shorthand:
+getdoajmeta: data/oastatus2doaj.csv
+###############################################################################
+
 data/ipniname-oastatus-wcvp.txt: addwcvp.py data/ipniname-oastatus.csv downloads/wcvp_names.txt downloads/wcvp_distributions.txt
 	mkdir -p data
 	$(python_launch_cmd) $^ $(limit_args) $@
@@ -110,7 +119,7 @@ plotoa_level2_taxnov: data/oatrend-dist-2-taxnov.png
 plotoa_level3_taxnov: data/oatrend-dist-3-taxnov.png
 ###############################################################################
 
-all: data/oatrend.png data/oastatustrend.png data/oatrend-dist-1.png data/oatrend-dist-2.png data/oatrend-dist-3.png data/oatrend-dist-1-taxnov.png data/oatrend-dist-2-taxnov.png data/oatrend-dist-3-taxnov.png
+all: data/oatrend.png data/oastatustrend.png data/oatrend-dist-1.png data/oatrend-dist-2.png data/oatrend-dist-3.png data/oatrend-dist-1-taxnov.png data/oatrend-dist-2-taxnov.png data/oatrend-dist-3-taxnov.png data/oastatus2doaj.csv
 
 archive:
 	mkdir -p archive
