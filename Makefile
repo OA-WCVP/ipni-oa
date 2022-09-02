@@ -137,12 +137,12 @@ all: data/oatrend.png data/oatrendpc.png data/oastatustrend.png data/oastatustre
 data_archive_zip:=$(shell basename $(CURDIR))-data.zip
 downloads_archive_zip:=$(shell basename $(CURDIR))-downloads.zip
 
-archive:
+archive: data/*.png
 	mkdir -p archive	
 	echo "Archived on $(date_formatted)" >> data/archive-info.txt
-	zip archive/$(data_archive_zip) data/* -r
+	zip archive/$(data_archive_zip) data/archive-info.txt data/* -r
 	echo "Archived on $(date_formatted)" >> downloads/archive-info.txt
-	zip archive/$(downloads_archive_zip) downloads/* -r
+	zip archive/$(downloads_archive_zip) data/archive-info.txt downloads/* -r
 	
 clean:
 	rm -f data/*
