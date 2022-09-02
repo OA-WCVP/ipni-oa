@@ -19,6 +19,7 @@ def main():
     parser.add_argument('--quiet', action='store_true')
     parser.add_argument("--tdwg_wgsrpd_level", default=3, type=int)
     parser.add_argument("--tax_novs_only", action='store_true')
+    parser.add_argument('--plot-percentage', action='store_true')
     parser.add_argument('-d','--delimiter', type=str, default='\t')
     parser.add_argument('outputfile')
 
@@ -51,18 +52,33 @@ def main():
     df.columns=[area_name_column.capitalize(),'OA_false','OA_true','OA_n/a']
     print(df)
 
+    #
+    # 2.4 Convert to a percentage data structure
+    if (args.plot_percentage):
+        df['total']=df.sum(axis=1)
+        for col in ['OA_false','OA_true','OA_n/a']:
+            df[col] = df[col]/df['total']
+            df[col] = df[col]*100
+        df.drop(columns='total',inplace=True)
+    print(df)
+
     ###########################################################################
     # 3. Plot and save figure to outputfile
     ###########################################################################
-    df[[area_name_column.capitalize(),'OA_false','OA_true','OA_n/a']].set_index(area_name_column.capitalize()).plot(kind='bar', stacked=True)
+    df[[area_name_column.capitalize(),'OA_false','OA_true','OA_n/a']].set_index(area_name_column.capitalize()).plot(kind='bar', stacked=True,figsize=(10, 8))
     plt.legend(title='Open access', loc='upper left')
     #plt.ylim((0,12000))
     if args.tax_novs_only:
         plt.title("Open access status of tax. nov. IPNI nomenclatural acts by WCVP distribution")
     else:
         plt.title("Open access status of all IPNI nomenclatural acts by WCVP distribution")
+    if args.plot_percentage:
+        plt.ylabel("Percentage of nomenclatural acts")
+        plt.legend(bbox_to_anchor=(1.0, 1.0))
+    else:
+        plt.ylabel("Number of nomenclatural acts")
     plt.xlabel(area_name_column.capitalize())
-    plt.ylabel("#")
+    plt.xticks(rotation=45, ha='right')
     plt.tight_layout()
     plt.savefig(args.outputfile)
 

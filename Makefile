@@ -1,4 +1,5 @@
 year_min = 2012
+year_max = 2021
 wcvp_name_url=https://www.dropbox.com/s/pkpv3tc5v9k0thh/wcvp_names.txt?dl=0
 wcvp_dist_url=https://www.dropbox.com/s/9vefyzzp978m2f1/wcvp_distribution.txt?dl=0
 
@@ -26,7 +27,7 @@ downloads/wcvp_distributions.txt:
 
 downloads/ipninames.csv: getipninames.py
 	mkdir -p downloads
-	$(python_launch_cmd) getipninames.py --year_min $(year_min) $@
+	$(python_launch_cmd) getipninames.py --year_min $(year_min) --year_max $(year_max) $@
 
 getnames: downloads/ipninames.csv
 
@@ -113,6 +114,16 @@ plotoa_level3: data/oatrend-dist-3.png
 ###############################################################################
 
 ###############################################################################
+#  Plot OA takeup by WCVP dist - all nomenclatural acts percent
+data/oatrend-dist-%-pc.png: plotoadist.py data/ipniname-oastatus-wcvp-report-%.csv
+	$(python_launch_cmd) $^ $(limit_args) --plot-percentage --tdwg_wgsrpd_level=$* $@
+# Shorthand:
+plotoa_level1_pc: data/oatrend-dist-1-pc.png
+plotoa_level2_pc: data/oatrend-dist-2-pc.png
+plotoa_level3_pc: data/oatrend-dist-3-pc.png
+###############################################################################
+
+###############################################################################
 # Report on OA status per WCVP dist - tax novs only
 data/ipniname-oastatus-wcvp-report-%-taxnov.csv: reportoastatusbydist.py data/ipniname-oastatus-wcvp.txt
 	$(python_launch_cmd) $^ $(limit_args) --tax_novs_only --tdwg_wgsrpd_level=$* $@
@@ -132,7 +143,26 @@ plotoa_level2_taxnov: data/oatrend-dist-2-taxnov.png
 plotoa_level3_taxnov: data/oatrend-dist-3-taxnov.png
 ###############################################################################
 
-all: data/oatrend.png data/oatrendpc.png data/oastatustrend.png data/oastatustrendpc.png data/oatrend-dist-1.png data/oatrend-dist-2.png data/oatrend-dist-3.png data/oatrend-dist-1-taxnov.png data/oatrend-dist-2-taxnov.png data/oatrend-dist-3-taxnov.png data/oastatus2doaj.csv data/oastatus2repositories.csv
+###############################################################################
+#  Plot OA takeup by WCVP dist - tax novs only percent
+data/oatrend-dist-%-taxnov-pc.png: plotoadist.py data/ipniname-oastatus-wcvp-report-%-taxnov.csv
+	$(python_launch_cmd) $^ $(limit_args)  --plot-percentage --tax_novs_only --tdwg_wgsrpd_level=$* $@
+# Shorthand:
+plotoa_level1_taxnov_pc: data/oatrend-dist-1-taxnov-pc.png
+plotoa_level2_taxnov_pc: data/oatrend-dist-2-taxnov-pc.png
+plotoa_level3_taxnov_pc: data/oatrend-dist-3-taxnov-pc.png
+###############################################################################
+
+oatrends_charts:=data/oatrend.png data/oastatustrend.png
+oatrends_pc_charts:=data/oatrendpc.png data/oastatustrendpc.png
+dist1_charts:=data/oatrend-dist-1.png data/oatrend-dist-1-taxnov.png
+dist1_pc_charts:=data/oatrend-dist-1-pc.png data/oatrend-dist-1-taxnov-pc.png
+dist2_charts:=data/oatrend-dist-2.png data/oatrend-dist-2-taxnov.png
+dist2_pc_charts:=data/oatrend-dist-2-pc.png data/oatrend-dist-2-taxnov-pc.png
+dist3_charts:=data/oatrend-dist-3.png data/oatrend-dist-3-taxnov.png
+dist3_pc_charts:=data/oatrend-dist-3-pc.png data/oatrend-dist-3-taxnov-pc.png
+
+all: $(oatrends_charts) $(oatrends_pc_charts) $(dist1_charts) $(dist1_pc_charts) $(dist2_charts) $(dist2_pc_charts) $(dist3_charts) $(dist3_pc_charts)
 
 data_archive_zip:=$(shell basename $(CURDIR))-data.zip
 downloads_archive_zip:=$(shell basename $(CURDIR))-downloads.zip
