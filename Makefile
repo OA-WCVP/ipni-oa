@@ -105,22 +105,22 @@ reportoa_level_3: data/ipniname-oastatus-wcvp-report-3.csv
 
 ###############################################################################
 #  Plot OA takeup by WCVP dist - all nomenclatural acts
-data/oatrend-dist-%.png: plotoadist.py data/ipniname-oastatus-wcvp-report-%.csv
+data/ipni-oatrend-dist-%.png: plotoadist.py data/ipniname-oastatus-wcvp-report-%.csv
 	$(python_launch_cmd) $^ $(limit_args) --tdwg_wgsrpd_level=$* $@
 # Shorthand:
-plotoa_level1: data/oatrend-dist-1.png
-plotoa_level2: data/oatrend-dist-2.png
-plotoa_level3: data/oatrend-dist-3.png
+plotoa_level1: data/ipni-oatrend-dist-1.png
+plotoa_level2: data/ipni-oatrend-dist-2.png
+plotoa_level3: data/ipni-oatrend-dist-3.png
 ###############################################################################
 
 ###############################################################################
 #  Plot OA takeup by WCVP dist - all nomenclatural acts percent
-data/oatrend-dist-%-pc.png: plotoadist.py data/ipniname-oastatus-wcvp-report-%.csv
+data/ipni-oatrend-dist-%-pc.png: plotoadist.py data/ipniname-oastatus-wcvp-report-%.csv
 	$(python_launch_cmd) $^ $(limit_args) --plot-percentage --tdwg_wgsrpd_level=$* $@
 # Shorthand:
-plotoa_level1_pc: data/oatrend-dist-1-pc.png
-plotoa_level2_pc: data/oatrend-dist-2-pc.png
-plotoa_level3_pc: data/oatrend-dist-3-pc.png
+plotoa_level1_pc: data/ipni-oatrend-dist-1-pc.png
+plotoa_level2_pc: data/ipni-oatrend-dist-2-pc.png
+plotoa_level3_pc: data/ipni-oatrend-dist-3-pc.png
 ###############################################################################
 
 ###############################################################################
@@ -135,32 +135,32 @@ reportoa_level_3_taxnov: data/ipniname-oastatus-wcvp-report-3-taxnov.csv
 
 ###############################################################################
 #  Plot OA takeup by WCVP dist - tax novs only
-data/oatrend-dist-%-taxnov.png: plotoadist.py data/ipniname-oastatus-wcvp-report-%-taxnov.csv
+data/ipni-oatrend-dist-%-taxnov.png: plotoadist.py data/ipniname-oastatus-wcvp-report-%-taxnov.csv
 	$(python_launch_cmd) $^ $(limit_args)  --tax_novs_only --tdwg_wgsrpd_level=$* $@
 # Shorthand:
-plotoa_level1_taxnov: data/oatrend-dist-1-taxnov.png
-plotoa_level2_taxnov: data/oatrend-dist-2-taxnov.png
-plotoa_level3_taxnov: data/oatrend-dist-3-taxnov.png
-###############################################################################
+plotoa_level1_taxnov: data/ipni-oatrend-dist-1-taxnov.png
+plotoa_level2_taxnov: data/ipni-oatrend-dist-2-taxnov.png
+plotoa_level3_taxnov: data/ipni-oatrend-dist-3-taxnov.png
+###############################################################################data/ipni-oatrend
 
 ###############################################################################
 #  Plot OA takeup by WCVP dist - tax novs only percent
-data/oatrend-dist-%-taxnov-pc.png: plotoadist.py data/ipniname-oastatus-wcvp-report-%-taxnov.csv
+data/ipni-oatrend-dist-%-taxnov-pc.png: plotoadist.py data/ipniname-oastatus-wcvp-report-%-taxnov.csv
 	$(python_launch_cmd) $^ $(limit_args)  --plot-percentage --tax_novs_only --tdwg_wgsrpd_level=$* $@
 # Shorthand:
-plotoa_level1_taxnov_pc: data/oatrend-dist-1-taxnov-pc.png
-plotoa_level2_taxnov_pc: data/oatrend-dist-2-taxnov-pc.png
-plotoa_level3_taxnov_pc: data/oatrend-dist-3-taxnov-pc.png
+plotoa_level1_taxnov_pc: data/ipni-oatrend-dist-1-taxnov-pc.png
+plotoa_level2_taxnov_pc: data/ipni-oatrend-dist-2-taxnov-pc.png
+plotoa_level3_taxnov_pc: data/ipni-oatrend-dist-3-taxnov-pc.png
 ###############################################################################
 
 oatrends_charts:=data/ipni-oatrend.png data/ipni-oastatustrend.png
 oatrends_pc_charts:=data/ipni-oatrendpc.png data/ipni-oastatustrendpc.png
-dist1_charts:=data/oatrend-dist-1.png data/oatrend-dist-1-taxnov.png
-dist1_pc_charts:=data/oatrend-dist-1-pc.png data/oatrend-dist-1-taxnov-pc.png
-dist2_charts:=data/oatrend-dist-2.png data/oatrend-dist-2-taxnov.png
-dist2_pc_charts:=data/oatrend-dist-2-pc.png data/oatrend-dist-2-taxnov-pc.png
-dist3_charts:=data/oatrend-dist-3.png data/oatrend-dist-3-taxnov.png
-dist3_pc_charts:=data/oatrend-dist-3-pc.png data/oatrend-dist-3-taxnov-pc.png
+dist1_charts:=data/ipni-oatrend-dist-1.png data/ipni-oatrend-dist-1-taxnov.png
+dist1_pc_charts:=data/ipni-oatrend-dist-1-pc.png data/ipni-oatrend-dist-1-taxnov-pc.png
+dist2_charts:=data/ipni-oatrend-dist-2.png data/ipni-oatrend-dist-2-taxnov.png
+dist2_pc_charts:=data/ipni-oatrend-dist-2-pc.png data/ipni-oatrend-dist-2-taxnov-pc.png
+dist3_charts:=data/ipni-oatrend-dist-3.png data/ipni-oatrend-dist-3-taxnov.png
+dist3_pc_charts:=data/ipni-oatrend-dist-3-pc.png data/ipni-oatrend-dist-3-taxnov-pc.png
 
 all: $(oatrends_charts) $(oatrends_pc_charts) $(dist1_charts) $(dist1_pc_charts) $(dist2_charts) $(dist2_pc_charts) $(dist3_charts) $(dist3_pc_charts)
 
