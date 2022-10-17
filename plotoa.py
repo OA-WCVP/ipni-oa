@@ -30,6 +30,7 @@ def main():
     # 2.1 Add placeholder for NULL values in is_oa and oa_status fields
     df.is_oa.fillna('n/a',inplace=True)
     df.oa_status.fillna('n/a',inplace=True)
+    df.is_oa = df.is_oa.astype(str)
     #
     # 2.2 Rename columns
     column_renames = {'is_oa':'Open access'}
@@ -40,7 +41,9 @@ def main():
     dfg = df.groupby(['year','Open access']).n.sum().reset_index()
     # 2.3.2 Pivot table to get a column per Open access (T, F or n/a), values are totals
     dfg = dfg[['year','Open access','n']].pivot_table(index='year',columns='Open access',values='n')
-    print(dfg)
+    dfg.columns = dfg.columns.get_level_values('Open access')
+    oas=['True','False','n/a']
+    dfg = dfg[oas]
     #
     # 2.4 Convert to a percentage data structure
     if (args.plot_percentage):
@@ -54,7 +57,9 @@ def main():
     ###########################################################################
     # 3. Plot and save figure to outputfile
     ###########################################################################
-    dfg.plot(kind='bar', stacked=True)
+    colour_mapper = {'True':'#79be78','False':'#c5c5c5', 'n/a':'#ffffff'}
+    colours = [colour_mapper[oa] for oa in oas]
+    dfg.plot(kind='bar', stacked=True, linewidth=1, edgecolor='k', color=colours)
     plt.legend(title='Open access', loc='upper right')
     if args.plot_percentage:
         plt.ylim((0,100))

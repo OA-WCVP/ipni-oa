@@ -38,14 +38,17 @@ def main():
     # 2.3 Reshape data - pivot
     print(df.groupby(['year','is_oa'])['n'].sum())
     df = df[['year','Open access status','n']].pivot_table(index='year',columns='Open access status',values='n',aggfunc=sum)
-    print(df)    #
+    oa_statuses = ['green','gold','hybrid','bronze','closed','n/a']
+    df = df[oa_statuses]
+    print(df)
+    #
     #
     # 2.4 Convert to a percentage data structure
     if (args.plot_percentage):
         df['total']=df.sum(axis=1)
         print(df.columns)
-        df.columns=['bronze', 'closed', 'gold', 'green', 'hybrid', 'n/a', 'total']
-        for col in ['bronze', 'closed', 'gold', 'green', 'hybrid', 'n/a']:
+        df.columns= oa_statuses + ['total']
+        for col in oa_statuses:
             df[col] = df[col]/df['total']
         df.drop(columns='total',inplace=True)
         df = df*100
@@ -53,7 +56,9 @@ def main():
     ###########################################################################
     # 3. Plot and save figure to outputfile
     ###########################################################################
-    df.plot(kind='bar', stacked=True)
+    colour_mapper = {'green':'#79be78','gold':'#fde769','hybrid':'#feb352','bronze':'#d29766','closed':'#c5c5c5', 'n/a':'#ffffff'}
+    colours = [colour_mapper[oa_status] for oa_status in oa_statuses]
+    df.plot(kind='bar', stacked=True, linewidth=1, edgecolor='k', color=colours)
     plt.legend(title='Open access status', loc='upper right')
     if args.plot_percentage:
         plt.ylim((0,100))
