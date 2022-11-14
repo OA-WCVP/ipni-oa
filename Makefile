@@ -2,6 +2,7 @@ year_min = 2012
 year_max = 2021
 wcvp_name_url=https://www.dropbox.com/s/pkpv3tc5v9k0thh/wcvp_names.txt?dl=0
 wcvp_dist_url=https://www.dropbox.com/s/9vefyzzp978m2f1/wcvp_distribution.txt?dl=0
+ipni_coldp_url=https://zenodo.org/record/7208700/files/rdmpage/ipni-coldp-2022-10-15.zip?download=1
 
 python_launch_cmd=python
 python_launch_cmd=winpty python
@@ -25,11 +26,24 @@ downloads/wcvp_distributions.txt:
 	mkdir -p downloads
 	wget -O $@ $(wcvp_dist_url)
 
-downloads/ipninames.csv: getipninames.py
+downloads/ipninames.csv: getipninames.py data/ipni-coldp-dois.tsv
 	mkdir -p downloads
-	$(python_launch_cmd) getipninames.py --year_min $(year_min) --year_max $(year_max) $@
-
+	$(python_launch_cmd) $^ --year_min $(year_min) --year_max $(year_max) $@
 getnames: downloads/ipninames.csv
+
+downloads/ipni-coldp-2022-10-15.zip:
+	mkdir -p downloads
+	wget -O $@ $(ipni_coldp_url)
+
+downloads/rdmpage-ipni-coldp-8fe9cb4/names.tsv: downloads/ipni-coldp-2022-10-15.zip
+	unzip -p $^  rdmpage-ipni-coldp-8fe9cb4/names.tsv >$@
+
+downloads/rdmpage-ipni-coldp-8fe9cb4/references.tsv: downloads/ipni-coldp-2022-10-15.zip
+	unzip -p $^  rdmpage-ipni-coldp-8fe9cb4/references.tsv >$@
+
+data/ipni-coldp-dois.tsv: backfilldois.py downloads/rdmpage-ipni-coldp-8fe9cb4/names.tsv downloads/rdmpage-ipni-coldp-8fe9cb4/references.tsv
+	$(python_launch_cmd) $^ $(limit_args) $@
+
 
 ###############################################################################
 # Lookup literature in unpaywall
@@ -153,8 +167,30 @@ plotoa_level2_taxnov_pc: data/ipni-oatrend-dist-2-taxnov-pc.png
 plotoa_level3_taxnov_pc: data/ipni-oatrend-dist-3-taxnov-pc.png
 ###############################################################################
 
+##
+###############################################################################
+# Report on publication types over time
+data/ipniname-publtype-report.csv: reportpubltype.py data/ipniname-oastatus.csv
+	$(python_launch_cmd) $^ $(limit_args) $@
+# Shorthand:
+reportpubltype: data/ipniname-publtype-report.csv
+###############################################################################
+
+###############################################################################
+#  Plot OA takeup over time
+data/ipni-publtype.png: plotpubltype.py data/ipniname-publtype-report.csv
+	$(python_launch_cmd) $^ $(limit_args) $@
+data/ipni-publtypepc.png: plotpubltype.py data/ipniname-publtype-report.csv
+	$(python_launch_cmd) $^ $(limit_args) --plot-percentage $@
+# Shorthand:
+plotpubltype: data/ipni-publtype.png data/ipni-publtypepc.png
+###############################################################################
+##
+
 oatrends_charts:=data/ipni-oatrend.png data/ipni-oastatustrend.png
 oatrends_pc_charts:=data/ipni-oatrendpc.png data/ipni-oastatustrendpc.png
+publtype_charts:=data/ipni-publtype.png
+publtype_pc_charts:=data/ipni-publtypepc.png
 dist1_charts:=data/ipni-oatrend-dist-1.png data/ipni-oatrend-dist-1-taxnov.png
 dist1_pc_charts:=data/ipni-oatrend-dist-1-pc.png data/ipni-oatrend-dist-1-taxnov-pc.png
 dist2_charts:=data/ipni-oatrend-dist-2.png data/ipni-oatrend-dist-2-taxnov.png
@@ -162,7 +198,7 @@ dist2_pc_charts:=data/ipni-oatrend-dist-2-pc.png data/ipni-oatrend-dist-2-taxnov
 dist3_charts:=data/ipni-oatrend-dist-3.png data/ipni-oatrend-dist-3-taxnov.png
 dist3_pc_charts:=data/ipni-oatrend-dist-3-pc.png data/ipni-oatrend-dist-3-taxnov-pc.png
 
-all: $(oatrends_charts) $(oatrends_pc_charts) $(dist1_charts) $(dist1_pc_charts) $(dist2_charts) $(dist2_pc_charts) $(dist3_charts) $(dist3_pc_charts)
+all: $(oatrends_charts) $(oatrends_pc_charts) $(dist1_charts) $(dist1_pc_charts) $(dist2_charts) $(dist2_pc_charts) $(dist3_charts) $(dist3_pc_charts) $(publtype_charts) $(publtype_pc_charts)
 
 data_archive_zip:=$(shell basename $(CURDIR))-data.zip
 downloads_archive_zip:=$(shell basename $(CURDIR))-downloads.zip
