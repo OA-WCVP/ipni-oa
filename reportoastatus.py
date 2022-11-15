@@ -8,6 +8,8 @@ def main():
     parser = argparse.ArgumentParser()
     
     parser.add_argument('inputfile')
+    parser.add_argument('-g','--groupby', type=str, default='publicationYear')
+    parser.add_argument('--filtergroupvalues', type=str)
     parser.add_argument('-l','--limit', type=int, default=None)
     parser.add_argument('--quiet', action='store_true')
     parser.add_argument('-d','--delimiter', type=str, default='\t')
@@ -18,7 +20,8 @@ def main():
     ###########################################################################
     # 1. Read data files
     ###########################################################################
-    df = pd.read_csv(args.inputfile, sep=args.delimiter, nrows=args.limit, usecols=['id','doi','publicationYear','is_oa','oa_status'])
+    cols = ['id','doi',args.groupby,'is_oa','oa_status']
+    df = pd.read_csv(args.inputfile, sep=args.delimiter, nrows=args.limit, usecols=cols)
     df = df.replace({np.nan:None})
     print('Read {} of {} IPNI name rows'.format(args.inputfile, len(df)))
 
@@ -33,14 +36,18 @@ def main():
     df.oa_status.fillna('n/a',inplace=True)
 
     # 2.3 Convert year to int
-    df.publicationYear = df.publicationYear.astype(int)
+    if args.groupby == 'publicationYear':
+        df[args.groupby] = df[args.groupby].astype(int)
 
-    # 2.4 Column renames - more generic name for year
-    column_renames = {'publicationYear':'year'}
-    df.rename(columns=column_renames, inplace=True)
+    # 2.4 Apply filter
+    if args.filtergroupvalues is not None:
+        mask = (df[args.groupby].isin(args.filtergroupvalues.split(',')))
+        df = df[mask]
+    # column_renames = {'publicationYear':'year'}
+    # df.rename(columns=column_renames, inplace=True)
 
     # 2.5 Group
-    dfg = df.groupby(['year','has_doi','is_oa','oa_status']).size().to_frame('n')
+    dfg = df.groupby([args.groupby,'has_doi','is_oa','oa_status']).size().to_frame('n')
     print('Summarised {} IPNI name rows'.format(dfg.n.sum()))
 
     ###########################################################################

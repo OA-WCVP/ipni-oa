@@ -9,6 +9,7 @@ def main():
     parser = argparse.ArgumentParser()
     
     parser.add_argument('inputfile')
+    parser.add_argument('-g','--groupby', type=str, default='publicationYear')
     parser.add_argument('-l','--limit', type=int, default=None)
     parser.add_argument('--quiet', action='store_true')
     parser.add_argument('--plot-percentage', action='store_true')
@@ -36,8 +37,8 @@ def main():
     df.rename(columns=column_renames,inplace=True)
     #
     # 2.3 Reshape data - pivot
-    print(df.groupby(['year','is_oa'])['n'].sum())
-    df = df[['year','Open access status','n']].pivot_table(index='year',columns='Open access status',values='n',aggfunc=sum)
+    print(df.groupby([args.groupby,'is_oa'])['n'].sum())
+    df = df[[args.groupby,'Open access status','n']].pivot_table(index=args.groupby,columns='Open access status',values='n',aggfunc=sum)
     oa_statuses = ['green','gold','hybrid','bronze','closed','n/a']
     df = df[oa_statuses]
     print(df)
@@ -68,7 +69,7 @@ def main():
         plt.ylim((0,12000))
         plt.ylabel("Number of nomenclatural acts")
     plt.title("Open access status of IPNI monitored nomenclatural acts")
-    plt.xlabel("Year")
+    plt.xlabel(args.groupby)
     plt.tight_layout()
     plt.savefig(args.outputfile)
 

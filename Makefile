@@ -80,28 +80,86 @@ addwcvp: data/ipniname-oastatus-wcvp.txt
 
 
 ###############################################################################
+# Status: green, gold, hybrid, bronze etc
+# Takeup: T/F
+
+###############################################################################
 # Report on OA status over time
-data/ipniname-oastatus-report.csv: reportoastatus.py data/ipniname-oastatus.csv
+data/ipniname-oastatus-report-year.csv: reportoastatus.py data/ipniname-oastatus.csv
 	$(python_launch_cmd) $^ $(limit_args) $@
 # Shorthand:
-reportoa: data/ipniname-oastatus-report.csv
+reportoayear: data/ipniname-oastatus-report-year.csv
+###############################################################################
+
+###############################################################################
+# Report on OA status by publ
+data/ipniname-oastatus-report-publ.csv: reportoastatus.py data/ipniname-oastatus.csv
+	$(python_launch_cmd) $^ $(limit_args) --group publication $@
+# Shorthand:
+reportoapubl: data/ipniname-oastatus-report-publ.csv
+###############################################################################
+
+###############################################################################
+# Report on OA status by selected family (pro)
+data/ipniname-oastatus-report-fam-pro.csv: reportoastatus.py data/ipniname-oastatus.csv
+	$(python_launch_cmd) $^ $(limit_args) --group family --filtergroupvalues Poaceae,Solanaceae,Fabaceae $@
+# Shorthand:
+reportoafampro: data/ipniname-oastatus-report-fam-pro.csv
+###############################################################################
+
+###############################################################################
+# Report on OA status by selected family (hort)
+data/ipniname-oastatus-report-fam-hort.csv: reportoastatus.py data/ipniname-oastatus.csv
+	$(python_launch_cmd) $^ $(limit_args) --group family --filtergroupvalues Cactaceae,Orchidaceae,Bromeliaceae $@
+# Shorthand:
+reportoafamhort: data/ipniname-oastatus-report-fam-hort.csv
 ###############################################################################
 
 ###############################################################################
 #  Plot OA takeup over time
-data/ipni-oatrend.png: plotoa.py data/ipniname-oastatus-report.csv
+data/ipni-oatrend-year.png: plotoa.py data/ipniname-oastatus-report-year.csv
 	$(python_launch_cmd) $^ $(limit_args) $@
-data/ipni-oatrendpc.png: plotoa.py data/ipniname-oastatus-report.csv
+data/ipni-oatrendpc-year.png: plotoa.py data/ipniname-oastatus-report-year.csv
 	$(python_launch_cmd) $^ $(limit_args) --plot-percentage $@
 # Shorthand:
-plotoa: data/ipni-oatrend.png data/ipni-oatrendpc.png
+plotoayear: data/ipni-oatrend-year.png data/ipni-oatrendpc-year.png
+###############################################################################
+
+###############################################################################
+#  Plot OA takeup by publ
+data/ipni-oatrend-publ.png: plotoa.py data/ipniname-oastatus-report-publ.csv
+	$(python_launch_cmd) $^ $(limit_args) --group publication $@
+data/ipni-oatrendpc-publ.png: plotoa.py data/ipniname-oastatus-report-publ.csv
+	$(python_launch_cmd) $^ $(limit_args) --plot-percentage --group publication $@
+# Shorthand:
+plotoapubl: data/ipni-oatrend-publ.png data/ipni-oatrendpc-publ.png
+###############################################################################
+
+###############################################################################
+#  Plot OA takeup by family (pro)
+data/ipni-oatrend-fam-pro.png: plotoa.py data/ipniname-oastatus-report-fam-pro.csv
+	$(python_launch_cmd) $^ $(limit_args) --group family $@
+data/ipni-oatrendpc-fam-pro.png: plotoa.py data/ipniname-oastatus-report-fam-pro.csv
+	$(python_launch_cmd) $^ $(limit_args) --plot-percentage --group family $@
+# Shorthand:
+plotoafampro: data/ipni-oatrend-fam-pro.png data/ipni-oatrendpc-fam-pro.png
+###############################################################################
+
+###############################################################################
+#  Plot OA takeup by family (hort)
+data/ipni-oatrend-fam-hort.png: plotoa.py data/ipniname-oastatus-report-fam-hort.csv
+	$(python_launch_cmd) $^ $(limit_args) --group family $@
+data/ipni-oatrendpc-fam-hort.png: plotoa.py data/ipniname-oastatus-report-fam-hort.csv
+	$(python_launch_cmd) $^ $(limit_args) --plot-percentage --group family $@
+# Shorthand:
+plotoafamhort: data/ipni-oatrend-fam-hort.png data/ipni-oatrendpc-fam-hort.png
 ###############################################################################
 
 ###############################################################################
 #  Plot OA status over time
-data/ipni-oastatustrend.png: plotoastatus.py data/ipniname-oastatus-report.csv
+data/ipni-oastatustrend.png: plotoastatus.py data/ipniname-oastatus-report-year.csv
 	$(python_launch_cmd) $^ $(limit_args) $@
-data/ipni-oastatustrendpc.png: plotoastatus.py data/ipniname-oastatus-report.csv
+data/ipni-oastatustrendpc.png: plotoastatus.py data/ipniname-oastatus-report-year.csv
 	$(python_launch_cmd) $^ $(limit_args) --plot-percentage $@
 # Shorthand:
 plotoastatus: data/ipni-oastatustrend.png data/ipni-oastatustrendpc.png
@@ -187,8 +245,12 @@ plotpubltype: data/ipni-publtype.png data/ipni-publtypepc.png
 ###############################################################################
 ##
 
-oatrends_charts:=data/ipni-oatrend.png data/ipni-oastatustrend.png
-oatrends_pc_charts:=data/ipni-oatrendpc.png data/ipni-oastatustrendpc.png
+oatrends_charts_year:=data/ipni-oatrend-year.png data/ipni-oatrendpc-year.png 
+oatrends_charts_publ:=data/ipni-oatrend-publ.png data/ipni-oatrendpc-publ.png 
+oatrends_charts_fam_pro:=data/ipni-oatrend-fam-pro.png data/ipni-oatrendpc-fam-pro.png 
+oatrends_charts_fam_hort:=data/ipni-oatrend-fam-hort.png data/ipni-oatrendpc-fam-hort.png 
+oastatus_charts_year:= data/ipni-oastatustrend.png data/ipni-oastatustrendpc.png
+
 publtype_charts:=data/ipni-publtype.png
 publtype_pc_charts:=data/ipni-publtypepc.png
 dist1_charts:=data/ipni-oatrend-dist-1.png data/ipni-oatrend-dist-1-taxnov.png
@@ -198,7 +260,7 @@ dist2_pc_charts:=data/ipni-oatrend-dist-2-pc.png data/ipni-oatrend-dist-2-taxnov
 dist3_charts:=data/ipni-oatrend-dist-3.png data/ipni-oatrend-dist-3-taxnov.png
 dist3_pc_charts:=data/ipni-oatrend-dist-3-pc.png data/ipni-oatrend-dist-3-taxnov-pc.png
 
-all: $(oatrends_charts) $(oatrends_pc_charts) $(dist1_charts) $(dist1_pc_charts) $(dist2_charts) $(dist2_pc_charts) $(dist3_charts) $(dist3_pc_charts) $(publtype_charts) $(publtype_pc_charts)
+all: $(oatrends_charts_year) $(oatrends_charts_publ) $(oatrends_charts_fam_pro) $(oatrends_charts_fam_hort) $(oastatus_charts_year) $(dist1_charts) $(dist1_pc_charts) $(dist2_charts) $(dist2_pc_charts) $(dist3_charts) $(dist3_pc_charts) $(publtype_charts) $(publtype_pc_charts)
 
 data_archive_zip:=$(shell basename $(CURDIR))-data.zip
 downloads_archive_zip:=$(shell basename $(CURDIR))-downloads.zip
@@ -212,6 +274,9 @@ archive: $(oatrends_charts) $(oatrends_pc_charts) $(dist1_charts) $(dist1_pc_cha
 	
 clean:
 	rm -f data/*
+
+touch:
+	touch data/ipniname-oastatus.csv
 
 cleancharts:
 	rm -f data/*.png
