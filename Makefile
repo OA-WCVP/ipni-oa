@@ -128,7 +128,7 @@ plotoayear: data/ipni-oatrend-year.png data/ipni-oatrendpc-year.png
 ###############################################################################
 #  Plot OA takeup by publ
 data/ipni-oatrend-publ.png: plotoa.py data/ipniname-oastatus-report-publ.csv
-	$(python_launch_cmd) $^ $(limit_args) --group publication $@
+	$(python_launch_cmd) $^ $(limit_args) --group publication --logy $@
 data/ipni-oatrendpc-publ.png: plotoa.py data/ipniname-oastatus-report-publ.csv
 	$(python_launch_cmd) $^ $(limit_args) --plot-percentage --group publication $@
 # Shorthand:

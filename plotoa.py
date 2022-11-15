@@ -13,7 +13,10 @@ def main():
     parser.add_argument('-l','--limit', type=int, default=None)
     parser.add_argument('--quiet', action='store_true')
     parser.add_argument('--plot-percentage', action='store_true')
+    parser.add_argument('--logy', action='store_true')
     parser.add_argument('-d','--delimiter', type=str, default='\t')
+    parser.add_argument('--yearmin', default='2012')
+    parser.add_argument('--yearmax', default='2021')
     parser.add_argument('outputfile')
 
     args = parser.parse_args()
@@ -66,16 +69,19 @@ def main():
     ###########################################################################
     colour_mapper = {'True':'#79be78','False':'#c5c5c5', 'n/a':'#ffffff'}
     colours = [colour_mapper[oa] for oa in oas]
-    dfg[['True','False','n/a']].plot(kind='bar', stacked=True, linewidth=1, edgecolor='k', color=colours)
+    dfg[['True','False','n/a']].plot(kind='bar', stacked=True, linewidth=1, logy=args.logy, edgecolor='k', color=colours)
     plt.legend(title='Open access', loc='upper right')
     if args.plot_percentage:
         plt.ylim((0,100))
         plt.ylabel("Percentage of nomenclatural acts")
         plt.legend(bbox_to_anchor=(1.0, 1.0))
     else:
-        plt.ylim((0,12000))
+        if args.logy:
+            plt.ylim((1,100000))
+        else:
+            plt.ylim((0,12000))
         plt.ylabel("Number of nomenclatural acts")
-    plt.title("Open access status of IPNI monitored nomenclatural acts")
+    plt.title("OA status of IPNI nomenclatural acts {}-{}".format(args.yearmin,args.yearmax))
     plt.xlabel(args.groupby)
     plt.tight_layout()
     plt.savefig(args.outputfile)
