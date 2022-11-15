@@ -160,7 +160,7 @@ plotoafamhort: data/ipni-oatrend-fam-hort.png data/ipni-oatrendpc-fam-hort.png
 data/ipni-oastatustrend.png: plotoastatus.py data/ipniname-oastatus-report-year.csv
 	$(python_launch_cmd) $^ $(limit_args) $@
 data/ipni-oastatustrendpc.png: plotoastatus.py data/ipniname-oastatus-report-year.csv
-	$(python_launch_cmd) $^ $(limit_args) --plot-percentage $@
+	$(python_launch_cmd) $^ $(limit_args) --plot-percentage --removena $@
 # Shorthand:
 plotoastatus: data/ipni-oastatustrend.png data/ipni-oastatustrendpc.png
 ###############################################################################

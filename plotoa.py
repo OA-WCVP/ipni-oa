@@ -32,8 +32,9 @@ def main():
     # 2. Preparation
     ###########################################################################
     # 2.1 Add placeholder for NULL values in is_oa and oa_status fields
-    df.is_oa.fillna('n/a',inplace=True)
-    df.oa_status.fillna('n/a',inplace=True)
+    na_label = 'non-discoverable'
+    df.is_oa.fillna(na_label,inplace=True)
+    df.oa_status.fillna(na_label,inplace=True)
     df.is_oa = df.is_oa.astype(str)
     #
     # 2.2 Rename columns
@@ -46,7 +47,7 @@ def main():
     # 2.3.2 Pivot table to get a column per Open access (T, F or n/a), values are totals
     dfg = dfg[[args.groupby,'Open access','n']].pivot_table(index=args.groupby,columns='Open access',values='n')
     dfg.columns = dfg.columns.get_level_values('Open access')
-    oas=['True','False','n/a']
+    oas=['True','False',na_label]
     dfg = dfg[oas]
 
     #
@@ -58,8 +59,8 @@ def main():
     # 2.5 Convert to a percentage data structure
     if (args.plot_percentage):
         dfg['total']=dfg.sum(axis=1)
-        dfg.columns=['False','True','n/a','total']
-        for col in ['False','True','n/a']:
+        dfg.columns=['False','True',na_label,'total']
+        for col in ['False','True',na_label]:
             dfg[col] = dfg[col]/dfg['total']
         dfg.drop(columns='total',inplace=True)
         dfg = dfg*100
@@ -67,9 +68,9 @@ def main():
     ###########################################################################
     # 3. Plot and save figure to outputfile
     ###########################################################################
-    colour_mapper = {'True':'#79be78','False':'#c5c5c5', 'n/a':'#ffffff'}
+    colour_mapper = {'True':'#79be78','False':'#c5c5c5', na_label:'#ffffff'}
     colours = [colour_mapper[oa] for oa in oas]
-    dfg[['True','False','n/a']].plot(kind='bar', stacked=True, linewidth=1, logy=args.logy, edgecolor='k', color=colours)
+    dfg[['True','False',na_label]].plot(kind='bar', stacked=True, linewidth=1, logy=args.logy, edgecolor='k', color=colours)
     plt.legend(title='Open access', loc='upper right')
     if args.plot_percentage:
         plt.ylim((0,100))
