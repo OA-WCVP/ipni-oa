@@ -5,3 +5,5 @@ pykew
 requests
 tqdm
 unpywall
+geopandas
+mapclassify
