@@ -131,40 +131,18 @@ reportoa_level_2: data/ipniname-oastatus-wcvp-report-2.csv
 reportoa_level_3: data/ipniname-oastatus-wcvp-report-3.csv
 ###############################################################################
 
-
-###############################################################################
-# Map WCVP data: ration between open and closed access
-data/oaratio-wcvp-map-level-%.png: plotoageo.py data/ipniname-oastatus-wcvp-report-$*.csv
-	$(python_launch_cmd) $^ $(limit_args) --tdwg_wgsrpd_level=$* --plot-maps $@
-# Shorthand:
-oaratio_level_1: data/oaratio-wcvp-map-level-1.png
-oaratio_level_2: data/oaratio-wcvp-map-level-2.png
-oaratio_level_3: data/oaratio-wcvp-map-level-3.png
-###############################################################################
-
-
-###############################################################################
-# Map WCVP data: proportion of unfindable publications
-data/findability-wcvp-map-level-%.png: plotoageo.py data/ipniname-oastatus-wcvp-report-$*.csv
-	$(python_launch_cmd) $^ $(limit_args) --tdwg_wgsrpd_level=$* --plot-maps --unfindable=True  $@
-# Shorthand:
-findability_level_1: data/findability-wcvp-map-level-1.png
-findability_level_2: data/findability-wcvp-map-level-2.png
-findability_level_3: data/findability-wcvp-map-level-3.png
-###############################################################################
-
 oatrends_charts_year:=data/ipni-oatrend-year.png
 oastatus_charts_year:= data/ipni-oastatustrendpc.png
 oatrends_charts_publ:=data/ipni-oatrend-publ.png
 
-# TODO add map charts
+wcvp_reports:= data/ipniname-oastatus-wcvp-report-1.csv data/ipniname-oastatus-wcvp-report-2.csv data/ipniname-oastatus-wcvp-report-3.csv
 
-all: $(oatrends_charts_year) $(oastatus_charts_year) $(oatrends_charts_publ)
+all: $(oatrends_charts_year) $(oastatus_charts_year) $(oatrends_charts_publ) $(wcvp_reports)
 
 data_archive_zip:=$(shell basename $(CURDIR))-data.zip
 downloads_archive_zip:=$(shell basename $(CURDIR))-downloads.zip
 
-archive: $(oatrends_charts_year) $(oastatus_charts_year) $(oatrends_charts_publ)
+archive: $(oatrends_charts_year) $(oastatus_charts_year) $(oatrends_charts_publ) $(wcvp_reports)
 	mkdir -p archive	
 	echo "Archived on $(date_formatted)" >> data/archive-info.txt
 	zip archive/$(data_archive_zip) data/archive-info.txt data/* -r
