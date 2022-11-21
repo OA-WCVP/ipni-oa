@@ -27,7 +27,7 @@ def main():
     ###########################################################################
     # 1. Read data file
     ###########################################################################
-    df = pd.read_csv(args.inputfile, usecols=['journal_name','journal_is_in_doaj','journal_issns'], nrows=args.limit, sep='\t')
+    df = pd.read_csv(args.inputfile, usecols=['linkedPublication.id','linkedPublication.title','journal_name','journal_is_in_doaj','journal_issns'], nrows=args.limit, sep='\t')
     df = df.replace({np.nan:None})
     print('Read {} of {} IPNI name OA status rows'.format(args.inputfile, len(df)))
     df.drop(df[df.journal_is_in_doaj.isnull()].index,inplace=True)
@@ -52,8 +52,13 @@ def main():
     ###########################################################################
     mask = df.journal_is_in_doaj
     doaj_metadata = []
-    for issn in df[mask].journal_issns:
-        doaj_metadata.extend(getDoajMetadata(issn))
+    for index, row in df[mask].iterrows():
+        doaj_metadata_records = getDoajMetadata(row['journal_issns'])
+        for doaj_metadata_record in doaj_metadata_records: 
+            for publication_col in ['linkedPublication.id','linkedPublication.title']:
+                doaj_metadata_record[publication_col] = row[publication_col]
+            
+        doaj_metadata.extend(doaj_metadata_records)
     df_doaj = pd.json_normalize(doaj_metadata)
 
     ###########################################################################

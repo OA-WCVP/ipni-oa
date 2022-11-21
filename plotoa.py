@@ -20,7 +20,8 @@ def main():
     parser.add_argument('--yearmin', default='2012')
     parser.add_argument('--yearmax', default='2021')
     parser.add_argument('--percentage_coverage', default=0.80)
-    parser.add_argument('outputfile')
+    parser.add_argument('outputfile_chart')
+    parser.add_argument('outputfile_table')
     args = parser.parse_args()
 
     ###########################################################################
@@ -119,7 +120,8 @@ def main():
     plt.title("OA status of IPNI nomenclatural acts {}-{}".format(args.yearmin,args.yearmax))
     cat_axis_label_method(args.groupby)
     plt.tight_layout()
-    plt.savefig(args.outputfile)
+    plt.savefig(args.outputfile_chart)
+    dfg.to_csv(args.outputfile_table,sep='\t')
 
 if __name__ == "__main__":
     main()

@@ -55,6 +55,15 @@ getoastatus: data/ipniname-oastatus.csv
 ###############################################################################
 
 ###############################################################################
+# Extract publication details from IPNI name dataset
+data/ipnipubls.csv: ipninames2publs.py data/ipniname-oastatus.csv
+	mkdir -p data
+	$(python_launch_cmd) $^ $(limit_args) $@
+# Shorthand:
+getipnipubls: data/ipnipubls.csv
+###############################################################################
+
+###############################################################################
 # Lookup journal metadata in DOAJ
 data/oastatus2doaj.csv: oastatus2doaj.py data/ipniname-oastatus.csv
 	mkdir -p data
@@ -107,8 +116,8 @@ reportoapubl: data/ipniname-oastatus-report-publ-2019-2021.csv
 
 ###############################################################################
 #  Plot OA takeup over time
-data/ipni-oatrend-year.png: plotoa.py data/ipniname-oastatus-report-year.csv
-	$(python_launch_cmd) $^ $(limit_args) $@
+data/ipni-oatrend-year.png data/ipni-oatrend-year.txt: plotoa.py data/ipniname-oastatus-report-year.csv
+	$(python_launch_cmd) $^ $(limit_args) $(basename $@).png $(basename $@).txt
 # Shorthand:
 plotoayear: data/ipni-oatrend-year.png
 ###############################################################################
@@ -123,18 +132,18 @@ plotoastatus: data/ipni-oastatustrendpc.png
 
 ###############################################################################
 #  Plot OA takeup by publ
-data/ipni-oatrend-publ.png: plotoa.py data/ipniname-oastatus-report-publ.csv
-	# $(python_launch_cmd) $^ $(limit_args) --group publication --log_axis --horizontal $@
-	$(python_launch_cmd) $^ $(limit_args) --group publication --horizontal $@
+data/ipni-oatrend-publ.png data/ipni-oatrend-publ.txt: plotoa.py data/ipniname-oastatus-report-publ.csv
+	# $(python_launch_cmd) $^ $(limit_args) --group publication --log_axis --horizontal $(basename $@).png $(basename $@).txt
+	$(python_launch_cmd) $^ $(limit_args) --group publication --horizontal $(basename $@).png $(basename $@).txt
 # Shorthand:
 plotoapubl: data/ipni-oatrend-publ.png
 ###############################################################################
 
 ###############################################################################
 #  Plot OA takeup by publ
-data/ipni-oatrend-publ-2019-2021.png: plotoa.py data/ipniname-oastatus-report-publ-2019-2021.csv
+data/ipni-oatrend-publ-2019-2021.png data/ipni-oatrend-publ-2019-2021.txt: plotoa.py data/ipniname-oastatus-report-publ-2019-2021.csv
 	# $(python_launch_cmd) $^ $(limit_args) --group publication --log_axis --horizontal $@
-	$(python_launch_cmd) $^ $(limit_args) --yearmin=2019 --yearmax=2021 --group publication --horizontal $@ 
+	$(python_launch_cmd) $^ $(limit_args) --yearmin=2019 --yearmax=2021 --group publication --horizontal $(basename $@).png $(basename $@).txt
 # Shorthand:data/ipniname-oastatus-report-publ-2019-2021.csv
 plotoapublyr: data/ipni-oatrend-publ-2019-2021.png
 ###############################################################################
@@ -149,18 +158,28 @@ reportoa_level_2: data/ipniname-oastatus-wcvp-report-2.csv
 reportoa_level_3: data/ipniname-oastatus-wcvp-report-3.csv
 ###############################################################################
 
+###############################################################################
+
+# Build SI table
+data/publ-si-table.txt: buildpublsitable.py data/ipni-oatrend-publ-2019-2021.txt data/ipnipubls.csv data/oastatus2doaj.csv
+	$(python_launch_cmd) $^ $(limit_args) --yearmin=2019 --yearmax=2021 $@
+buildpublsitable: data/publ-si-table.txt
+###############################################################################
+
 oatrends_charts_year:=data/ipni-oatrend-year.png
 oastatus_charts_year:= data/ipni-oastatustrendpc.png
 oatrends_charts_publ:=data/ipni-oatrend-publ.png data/ipni-oatrend-publ-2019-2021.png
 
 wcvp_reports:= data/ipniname-oastatus-wcvp-report-1.csv data/ipniname-oastatus-wcvp-report-2.csv data/ipniname-oastatus-wcvp-report-3.csv
 
-all: $(oatrends_charts_year) $(oastatus_charts_year) $(oatrends_charts_publ) $(wcvp_reports)
+si_tables:= data/publ-si-table.txt
+
+all: $(oatrends_charts_year) $(oastatus_charts_year) $(oatrends_charts_publ) $(wcvp_reports) $(si_tables)
 
 data_archive_zip:=$(shell basename $(CURDIR))-data.zip
 downloads_archive_zip:=$(shell basename $(CURDIR))-downloads.zip
 
-archive: $(oatrends_charts_year) $(oastatus_charts_year) $(oatrends_charts_publ) $(wcvp_reports)
+archive: $(oatrends_charts_year) $(oastatus_charts_year) $(oatrends_charts_publ) $(wcvp_reports) $(si_tables)
 	mkdir -p archive	
 	echo "Archived on $(date_formatted)" >> data/archive-info.txt
 	zip archive/$(data_archive_zip) data/archive-info.txt data/* -r
