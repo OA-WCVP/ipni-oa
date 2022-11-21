@@ -52,11 +52,13 @@ def main():
     dfg.columns = dfg.columns.get_level_values('Open access')
     oas=['True','False',na_label]
     dfg = dfg[oas]
+    # Add total
+    dfg['total']=dfg.sum(axis=1)
 
     #
     # 2.4 If we are grouping by publication, select the top n most numerous publications to plot
     if args.groupby == 'publication':
-        dfg['total']=dfg.sum(axis=1)
+        
         grand_total = dfg['total'].sum()
         print(dfg.sort_values(by='total',ascending=False).head(n=50)['total'].sum())
         dfg = dfg.sort_values(by='total',ascending=False)
@@ -89,6 +91,7 @@ def main():
     cat_axis_label_method = plt.xlabel
     cat_axis_label_method = plt.ylabel
     num_axis_lim_method = plt.ylim
+    num_axis_label_method = plt.ylabel
     logx=False
     logy=False
     ascending=False
