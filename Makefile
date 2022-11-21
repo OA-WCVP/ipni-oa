@@ -98,6 +98,14 @@ reportoapubl: data/ipniname-oastatus-report-publ.csv
 ###############################################################################
 
 ###############################################################################
+# Report on OA status by publ - 2019-2021
+data/ipniname-oastatus-report-publ-2019-2021.csv: reportoastatus.py data/ipniname-oastatus.csv
+	$(python_launch_cmd) $^ $(limit_args) --yearmin=2019 --yearmax=2021 --group publication $@
+# Shorthand:
+reportoapubl: data/ipniname-oastatus-report-publ-2019-2021.csv
+###############################################################################
+
+###############################################################################
 #  Plot OA takeup over time
 data/ipni-oatrend-year.png: plotoa.py data/ipniname-oastatus-report-year.csv
 	$(python_launch_cmd) $^ $(limit_args) $@
@@ -116,9 +124,19 @@ plotoastatus: data/ipni-oastatustrendpc.png
 ###############################################################################
 #  Plot OA takeup by publ
 data/ipni-oatrend-publ.png: plotoa.py data/ipniname-oastatus-report-publ.csv
-	$(python_launch_cmd) $^ $(limit_args) --group publication --logy $@
+	# $(python_launch_cmd) $^ $(limit_args) --group publication --log_axis --horizontal $@
+	$(python_launch_cmd) $^ $(limit_args) --group publication --horizontal $@
 # Shorthand:
 plotoapubl: data/ipni-oatrend-publ.png
+###############################################################################
+
+###############################################################################
+#  Plot OA takeup by publ
+data/ipni-oatrend-publ-2019-2021.png: plotoa.py data/ipniname-oastatus-report-publ-2019-2021.csv
+	# $(python_launch_cmd) $^ $(limit_args) --group publication --log_axis --horizontal $@
+	$(python_launch_cmd) $^ $(limit_args) --yearmin=2019 --yearmax=2021 --group publication --horizontal $@ 
+# Shorthand:data/ipniname-oastatus-report-publ-2019-2021.csv
+plotoapublyr: data/ipni-oatrend-publ-2019-2021.png
 ###############################################################################
 
 ###############################################################################
@@ -133,7 +151,7 @@ reportoa_level_3: data/ipniname-oastatus-wcvp-report-3.csv
 
 oatrends_charts_year:=data/ipni-oatrend-year.png
 oastatus_charts_year:= data/ipni-oastatustrendpc.png
-oatrends_charts_publ:=data/ipni-oatrend-publ.png
+oatrends_charts_publ:=data/ipni-oatrend-publ.png data/ipni-oatrend-publ-2019-2021.png
 
 wcvp_reports:= data/ipniname-oastatus-wcvp-report-1.csv data/ipniname-oastatus-wcvp-report-2.csv data/ipniname-oastatus-wcvp-report-3.csv
 

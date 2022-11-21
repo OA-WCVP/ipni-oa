@@ -9,6 +9,8 @@ def main():
     
     parser.add_argument('inputfile')
     parser.add_argument('-g','--groupby', type=str, default='publicationYear')
+    parser.add_argument('--yearmin', type=int, default=2012)
+    parser.add_argument('--yearmax', type=int, default=2021)
     parser.add_argument('--filtergroupvalues', type=str)
     parser.add_argument('-l','--limit', type=int, default=None)
     parser.add_argument('--quiet', action='store_true')
@@ -21,9 +23,13 @@ def main():
     # 1. Read data files
     ###########################################################################
     cols = ['id','doi',args.groupby,'is_oa','oa_status']
+    if args.groupby != 'publicationYear':
+        cols.append('publicationYear')
     df = pd.read_csv(args.inputfile, sep=args.delimiter, nrows=args.limit, usecols=cols)
     df = df.replace({np.nan:None})
     print('Read {} of {} IPNI name rows'.format(args.inputfile, len(df)))
+    # Filter by year
+    df.drop(df[df['publicationYear'].astype(int).between(args.yearmin, args.yearmax)==False].index,inplace=True)
 
     ###########################################################################
     # 2. Preparation

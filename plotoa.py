@@ -3,6 +3,7 @@ import argparse
 import pandas as pd
 pd.set_option('display.max_rows',200)
 import numpy as np
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 def main():
@@ -13,12 +14,13 @@ def main():
     parser.add_argument('-l','--limit', type=int, default=None)
     parser.add_argument('--quiet', action='store_true')
     parser.add_argument('--plot-percentage', action='store_true')
-    parser.add_argument('--logy', action='store_true')
+    parser.add_argument('--log_axis', action='store_true')
+    parser.add_argument('--horizontal', action='store_true')
     parser.add_argument('-d','--delimiter', type=str, default='\t')
     parser.add_argument('--yearmin', default='2012')
     parser.add_argument('--yearmax', default='2021')
+    parser.add_argument('--percentage_coverage', default=0.80)
     parser.add_argument('outputfile')
-
     args = parser.parse_args()
 
     ###########################################################################
@@ -54,7 +56,18 @@ def main():
     # 2.4 If we are grouping by publication, select the top n most numerous publications to plot
     if args.groupby == 'publication':
         dfg['total']=dfg.sum(axis=1)
-        dfg = dfg.sort_values(by='total',ascending=False).head(n=30)
+        grand_total = dfg['total'].sum()
+        print(dfg.sort_values(by='total',ascending=False).head(n=50)['total'].sum())
+        dfg = dfg.sort_values(by='total',ascending=False)
+        # Add cumulative total
+        dfg['contribution'] = dfg['total']/grand_total
+        dfg['contribution_cs'] = dfg['contribution'].cumsum()
+        dfg['include'] = dfg['contribution_cs']<args.percentage_coverage
+        n = len(dfg[dfg['include']]) + 1
+        print('Using top {} publication'.format(n))
+        print(dfg.head(n=n*2))
+        dfg = dfg.head(n=n)
+        print(dfg)
     #
     # 2.5 Convert to a percentage data structure
     if (args.plot_percentage):
@@ -62,7 +75,7 @@ def main():
         dfg.columns=['False','True',na_label,'total']
         for col in ['False','True',na_label]:
             dfg[col] = dfg[col]/dfg['total']
-        dfg.drop(columns='total',inplace=True)
+        #dfg.drop(columns='total',inplace=True)
         dfg = dfg*100
 
     ###########################################################################
@@ -70,20 +83,41 @@ def main():
     ###########################################################################
     colour_mapper = {'True':'#79be78','False':'#c5c5c5', na_label:'#ffffff'}
     colours = [colour_mapper[oa] for oa in oas]
-    dfg[['True','False',na_label]].plot(kind='bar', stacked=True, linewidth=1, logy=args.logy, edgecolor='k', color=colours)
-    plt.legend(title='Open access', loc='upper right')
+    kind = 'bar'
+    
+    cat_axis_label_method = plt.xlabel
+    cat_axis_label_method = plt.ylabel
+    num_axis_lim_method = plt.ylim
+    logx=False
+    logy=False
+    ascending=False
+    figsize=mpl.rcParams["figure.figsize"]
+    loc='upper right'
+    if args.horizontal:
+        kind = 'barh'
+        logy=False
+        logx=args.log_axis
+        cat_axis_label_method = plt.ylabel
+        num_axis_label_method = plt.xlabel
+        num_axis_lim_method = plt.xlim
+        ascending=True
+        figsize=(8,12)
+        loc='lower right'
+        
+    dfg.sort_values(by='total',ascending=ascending)[['True','False',na_label]].plot(kind=kind, stacked=True, linewidth=1, logx=logx, logy=logy, edgecolor='k', color=colours, figsize=figsize)
+    plt.legend(title='Open access', loc=loc)
     if args.plot_percentage:
-        plt.ylim((0,100))
-        plt.ylabel("Percentage of nomenclatural acts")
+        num_axis_lim_method((0,100))
+        num_axis_label_method("Percentage of nomenclatural acts")
         plt.legend(bbox_to_anchor=(1.0, 1.0))
     else:
-        if args.logy:
-            plt.ylim((1,100000))
-        else:
-            plt.ylim((0,12000))
-        plt.ylabel("Number of nomenclatural acts")
+        if args.log_axis:
+            num_axis_lim_method((1,100000))
+        # else:
+        #     num_axis_lim_method((0,12000))
+        num_axis_label_method("Number of nomenclatural acts")
     plt.title("OA status of IPNI nomenclatural acts {}-{}".format(args.yearmin,args.yearmax))
-    plt.xlabel(args.groupby)
+    cat_axis_label_method(args.groupby)
     plt.tight_layout()
     plt.savefig(args.outputfile)
 
