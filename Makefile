@@ -36,6 +36,7 @@ downloads/ipni-coldp-2022-10-15.zip:
 	wget -O $@ $(ipni_coldp_url)
 
 downloads/rdmpage-ipni-coldp-8fe9cb4/names.tsv: downloads/ipni-coldp-2022-10-15.zip
+	mkdir -p downloads/rdmpage-ipni-coldp-8fe9cb4
 	unzip -p $^  rdmpage-ipni-coldp-8fe9cb4/names.tsv >$@
 
 downloads/rdmpage-ipni-coldp-8fe9cb4/references.tsv: downloads/ipni-coldp-2022-10-15.zip
@@ -110,25 +111,12 @@ reportoapubl: data/ipniname-oastatus-report-publ.csv
 # Report on OA status by publ - 2019-2021
 data/ipniname-oastatus-report-publ-2019-2021.csv: reportoastatus.py data/ipniname-oastatus.csv
 	$(python_launch_cmd) $^ $(limit_args) --yearmin=2019 --yearmax=2021 --group publication $@
-# Shorthand:
+
 reportoapubl: data/ipniname-oastatus-report-publ-2019-2021.csv
 ###############################################################################
 
-###############################################################################
-#  Plot OA takeup over time
-data/ipni-oatrend-year.png data/ipni-oatrend-year.txt: plotoa.py data/ipniname-oastatus-report-year.csv
-	$(python_launch_cmd) $^ $(limit_args) $(basename $@).png $(basename $@).txt
-# Shorthand:
-plotoayear: data/ipni-oatrend-year.png
-###############################################################################
-
-###############################################################################
-#  Plot OA status over time
-data/ipni-oastatustrendpc.png: plotoastatus.py data/ipniname-oastatus-report-year.csv
-	$(python_launch_cmd) $^ $(limit_args) --plot-percentage --removena $@
-# Shorthand:
-plotoastatus: data/ipni-oastatustrendpc.png
-###############################################################################
+data/ipni-oa-composite.png: plotoastatus.py data/ipniname-oastatus-report-year.csv
+	$(python_launch_cmd) $^ $(limit_args) --plottype=composite --plot_percentage_subplot_2 $@
 
 ###############################################################################
 #  Plot OA takeup by publ
@@ -166,20 +154,19 @@ data/publ-si-table.txt: buildpublsitable.py data/ipni-oatrend-publ-2019-2021.txt
 buildpublsitable: data/publ-si-table.txt
 ###############################################################################
 
-oatrends_charts_year:=data/ipni-oatrend-year.png
-oastatus_charts_year:= data/ipni-oastatustrendpc.png
+oa_charts_year:=data/ipni-oa-composite.png
 oatrends_charts_publ:=data/ipni-oatrend-publ.png data/ipni-oatrend-publ-2019-2021.png
 
 wcvp_reports:= data/ipniname-oastatus-wcvp-report-1.csv data/ipniname-oastatus-wcvp-report-2.csv data/ipniname-oastatus-wcvp-report-3.csv
 
 si_tables:= data/publ-si-table.txt
 
-all: $(oatrends_charts_year) $(oastatus_charts_year) $(oatrends_charts_publ) $(wcvp_reports) $(si_tables)
+all: $(oa_charts_year) $(oatrends_charts_publ) $(wcvp_reports) $(si_tables)
 
 data_archive_zip:=$(shell basename $(CURDIR))-data.zip
 downloads_archive_zip:=$(shell basename $(CURDIR))-downloads.zip
 
-archive: $(oatrends_charts_year) $(oastatus_charts_year) $(oatrends_charts_publ) $(wcvp_reports) $(si_tables)
+archive: $(oa_charts_year) $(oatrends_charts_publ) $(wcvp_reports) $(si_tables)
 	mkdir -p archive	
 	echo "Archived on $(date_formatted)" >> data/archive-info.txt
 	zip archive/$(data_archive_zip) data/archive-info.txt data/* -r
