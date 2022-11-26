@@ -27,8 +27,10 @@ def main():
     # 2. Do unpaywall lookup using DOI
     ###########################################################################
     mask = df.doi.notnull()
+    df.loc[mask,'doi'] = df[mask].doi.apply(lambda x: x.lower())
     UnpywallCredentials(args.email_address)
-    df_doi = Unpywall.doi(dois=df[mask].doi.unique().tolist(), errors='ignore', progress=True)
+    df_doi = Unpywall.doi(dois=df[mask].doi.unique().tolist(), errors='warn', progress=True)
+    df_doi.doi = df_doi.doi.apply(lambda x: x.lower())
     df = pd.merge(left=df, right=df_doi, left_on='doi', right_on='doi', how='left', suffixes=['','_unpaywall'])
     print(df[df.doi.notnull()].sample(n=1).T)
 
