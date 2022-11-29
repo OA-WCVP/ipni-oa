@@ -98,7 +98,7 @@ def main():
     # 3. Plot and save figure to outputfile
     ###########################################################################
     
-    colour_mapper = {'True':'#79be78','False':'#c5c5c5', na_label:'#ffffff'}
+    colour_mapper = {'True':'#ffffff','False':'#c5c5c5', na_label:'#000000'}
     colours = [colour_mapper[oa] for oa in oas]
     
     figsize=(8,12) # default is mpl.rcParams["figure.figsize"]

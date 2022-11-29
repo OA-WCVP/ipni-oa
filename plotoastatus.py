@@ -129,7 +129,7 @@ def reshape_and_plot(df, ax, plottype, plot_percentage):
         df_plot.drop(columns='total',inplace=True)
         df_plot = df_plot*100
 
-    colour_mapper = {'open':'#79be78','green':'#79be78','gold':'#fde769','hybrid':'#feb352','bronze':'#d29766','closed':'#c5c5c5', 'no-doi':'#ffffff'}
+    colour_mapper = {'open':'#ffffff','green':'#79be78','gold':'#fde769','hybrid':'#feb352','bronze':'#d29766','closed':'#c5c5c5', 'no-doi':'#000000'}
     colours = [colour_mapper[value] for value in values_as_columns]
     df_plot.plot(kind='bar', stacked=True, linewidth=1, edgecolor='k', color=colours, ax=ax,label=None)
 
