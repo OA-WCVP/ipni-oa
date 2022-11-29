@@ -102,17 +102,24 @@ reportoayear: data/ipniname-oastatus-report-year.csv
 ###############################################################################
 # Report on OA status by publ
 data/ipniname-oastatus-report-publ.csv: reportoastatus.py data/ipniname-oastatus.csv
-	$(python_launch_cmd) $^ $(limit_args) --group publication $@
+	$(python_launch_cmd) $^ $(limit_args) --group linkedPublication.id $@
 # Shorthand:
 reportoapubl: data/ipniname-oastatus-report-publ.csv
 ###############################################################################
 
 ###############################################################################
-# Report on OA status by publ - 2019-2021
+# Report on OA status by publ - selected years
+# 2019-2021
 data/ipniname-oastatus-report-publ-2019-2021.csv: reportoastatus.py data/ipniname-oastatus.csv
-	$(python_launch_cmd) $^ $(limit_args) --yearmin=2019 --yearmax=2021 --group publication $@
+	$(python_launch_cmd) $^ $(limit_args) --yearmin=2019 --yearmax=2021 --group linkedPublication.id $@
 
-reportoapubl: data/ipniname-oastatus-report-publ-2019-2021.csv
+reportoapubl201921: data/ipniname-oastatus-report-publ-2019-2021.csv
+
+# 2019
+data/ipniname-oastatus-report-publ-2019.csv: reportoastatus.py data/ipniname-oastatus.csv
+	$(python_launch_cmd) $^ $(limit_args) --yearmin=2019 --yearmax=2019 --group linkedPublication.id $@
+
+reportoapubl2019: data/ipniname-oastatus-report-publ-2019.csv
 ###############################################################################
 
 data/ipni-oa-composite.png: plotoastatus.py data/ipniname-oastatus-report-year.csv
@@ -120,20 +127,27 @@ data/ipni-oa-composite.png: plotoastatus.py data/ipniname-oastatus-report-year.c
 
 ###############################################################################
 #  Plot OA takeup by publ
-data/ipni-oatrend-publ.png data/ipni-oatrend-publ.txt: plotoa.py data/ipniname-oastatus-report-publ.csv
-	# $(python_launch_cmd) $^ $(limit_args) --group publication --log_axis --horizontal $(basename $@).png $(basename $@).txt
-	$(python_launch_cmd) $^ $(limit_args) --group publication --horizontal $(basename $@).png $(basename $@).txt
+data/ipni-oatrend-publ-all.png data/ipni-oatrend-publ-all.txt: plotpubl.py data/ipniname-oastatus-report-publ.csv data/oastatus2doaj.csv data/ipnipubls.csv 
+	$(python_launch_cmd) $^ $(limit_args) $(basename $@).png $(basename $@).txt
 # Shorthand:
-plotoapubl: data/ipni-oatrend-publ.png
+plotoapubl: data/ipni-oatrend-publ-all.png
 ###############################################################################
 
 ###############################################################################
-#  Plot OA takeup by publ
-data/ipni-oatrend-publ-2019-2021.png data/ipni-oatrend-publ-2019-2021.txt: plotoa.py data/ipniname-oastatus-report-publ-2019-2021.csv
-	# $(python_launch_cmd) $^ $(limit_args) --group publication --log_axis --horizontal $@
-	$(python_launch_cmd) $^ $(limit_args) --yearmin=2019 --yearmax=2021 --group publication --horizontal $(basename $@).png $(basename $@).txt
-# Shorthand:data/ipniname-oastatus-report-publ-2019-2021.csv
-plotoapublyr: data/ipni-oatrend-publ-2019-2021.png
+#  Plot OA takeup by publ - selected years
+
+# 2019-21
+data/ipni-oatrend-publ-2019-2021.png data/ipni-oatrend-publ-2019-2021.txt: plotpubl.py data/ipniname-oastatus-report-publ-2019-2021.csv  data/oastatus2doaj.csv data/ipnipubls.csv 
+	$(python_launch_cmd) $^ $(limit_args) --yearmin=2019 --yearmax=2021 $(basename $@).png $(basename $@).txt
+# Shorthand:
+plotoapublyr201920: data/ipni-oatrend-publ-2019-2021.png
+
+# 2019 only
+data/ipni-oatrend-publ-2019.png data/ipni-oatrend-publ-2019.txt: plotpubl.py data/ipniname-oastatus-report-publ-2019.csv  data/oastatus2doaj.csv data/ipnipubls.csv 
+	$(python_launch_cmd) $^ $(limit_args) --yearmin=2019 --yearmax=2019 $(basename $@).png $(basename $@).txt
+# Shorthand:
+plotoapublyr2019: data/ipni-oatrend-publ-2019.png
+
 ###############################################################################
 
 ###############################################################################
@@ -149,17 +163,17 @@ reportoa_level_3: data/ipniname-oastatus-wcvp-report-3.csv
 ###############################################################################
 
 # Build SI table
-data/publ-si-table.txt: buildpublsitable.py data/ipni-oatrend-publ-2019-2021.txt data/ipnipubls.csv data/oastatus2doaj.csv
-	$(python_launch_cmd) $^ $(limit_args) --yearmin=2019 --yearmax=2021 $@
-buildpublsitable: data/publ-si-table.txt
+data/si-table-publ-%.md: buildpublsitable.py data/ipni-oatrend-publ-%.txt resources/publication-urls.txt
+	$(python_launch_cmd) $^ $(limit_args) --daterange=$* $@
+buildpublsitable: data/si-table-publ-all.md
 ###############################################################################
 
 oa_charts_year:=data/ipni-oa-composite.png
-oatrends_charts_publ:=data/ipni-oatrend-publ.png data/ipni-oatrend-publ-2019-2021.png
+oatrends_charts_publ:=data/ipni-oatrend-publ-all.png data/ipni-oatrend-publ-2019-2021.png data/ipni-oatrend-publ-2019.png
 
 wcvp_reports:= data/ipniname-oastatus-wcvp-report-1.csv data/ipniname-oastatus-wcvp-report-2.csv data/ipniname-oastatus-wcvp-report-3.csv
 
-si_tables:= data/publ-si-table.txt
+si_tables:= data/si-table-publ-all.md data/si-table-publ-2019.md data/si-table-publ-2019-2021.md
 
 all: $(oa_charts_year) $(oatrends_charts_publ) $(wcvp_reports) $(si_tables)
 

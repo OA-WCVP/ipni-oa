@@ -5,3 +5,4 @@ pykew
 requests
 tqdm
 unpywall
+tabulate

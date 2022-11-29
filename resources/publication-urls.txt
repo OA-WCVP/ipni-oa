@@ -1,0 +1,44 @@
+linkedPublication.abbreviation	url
+Phytotaxa	https://www.mapress.com/pt/
+PhytoKeys	https://phytokeys.pensoft.net/
+Taxon	https://onlinelibrary.wiley.com/journal/19968175
+Austral. Orchid Rev.	https://www.biodiversitylibrary.org/bibliography/185262
+Phytoneuron	https://www.phytoneuron.net/
+Kew Bull.	https://www.springer.com/journal/12225
+Brittonia	https://www.springer.com/journal/12228
+Nat. Plants	https://www.nature.com/nplants/
+Novon	https://novon.mobot.org/index.php/novon
+Opera Bot. Belg.	https://www.nhbs.com/1/series/opera-botanica-belgica
+Syst. Bot.	https://www.ingentaconnect.com/content/aspt/sb
+Harvard Pap. Bot.	https://huh.harvard.edu/pages/publications
+Blumea	https://www.ingentaconnect.com/content/nhn/blumea
+Taiwania	https://taiwania.ntu.edu.tw/
+Nuytsia	https://florabase.dpaw.wa.gov.au/nuytsia/
+Molec. Phylogen. Evol.	https://www.sciencedirect.com/journal/molecular-phylogenetics-and-evolution
+Cact. Phantast.	https://zenodo.org/communities/cactologia/about/
+Lankesteriana	http://lankesteriana.org/
+Austral. Syst. Bot.	https://www.publish.csiro.au/SB
+Bot. J. Linn. Soc.	https://academic.oup.com/botlinnean
+Nordic J. Bot.	https://onlinelibrary.wiley.com/journal/17561051
+J. Jap. Bot.	http://www.jjbotany.com/
+Syst. Biodivers.	https://www.tandfonline.com/toc/tsab20/current
+New Taxa New Names	http://homepage.ntu.edu.tw/~yingshao/
+Int. J. Curr. Res. Biosci. Pl. Biol.	http://ijcrbp.com/
+Zlaki Rossii	
+Cladistics	https://onlinelibrary.wiley.com/journal/10960031
+Webbia	https://oaj.fupress.net/index.php/webbia/index
+Willdenowia	https://www.bgbm.org/en/willdenowia
+Icon. Orchid.	http://www.herbarioamo.org/index_archivos/Page284.htm
+Photo Intro Asian Bulbophyllum Coelogyne Dendrobium Orchids	
+Edinburgh J. Bot.	https://www.rbge.org.uk/science-and-conservation/our-journals/edinburgh-journal-of-botany/
+Candollea	https://bioone.org/journals/candollea/scope-and-details
+Gard. Bull. Singapore	https://www.nparks.gov.sg/sbg/research/publications/gardens'-bulletin-singapore/
+Orchid Rev.	https://www.rhs.org.uk/about-the-rhs/publications/the-orchid-review
+PeerJ	https://peerj.com/
+GIROS Orch. Spont. Eur.	
+Ann. Bot. Fenn.	http://www.sekj.org/AnnBot.html
+Introd. Austral. New Zealand Bulbophyllum Vandaceous Orchids	
+Ot Sist. Bot. Dergisi	
+Telopea	https://plantnet.rbgsyd.nsw.gov.au/Telopea/index.php
+Turczaninowia	http://turczaninowia.asu.ru/
+S. African J. Bot.	https://www.sciencedirect.com/journal/south-african-journal-of-botany
