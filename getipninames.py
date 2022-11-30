@@ -21,6 +21,7 @@ def main():
     parser.add_argument('inputfile_dois')
     parser.add_argument('-l','--limit', type=int, default=None)
     parser.add_argument('--quiet', action='store_true')
+    parser.add_argument('--drop_doi_source_cols', action='store_true',default=False)
     parser.add_argument('-d','--delimiter', type=str, default='\t')
     parser.add_argument('--year_min', type=int, default=1997)
     parser.add_argument('--year_max', type=int, default=None)
@@ -60,7 +61,8 @@ def main():
     df.loc[mask,'doi']=df[mask].doi_col
 
     # Drop temporary columns
-    df.drop(columns=['doi_ipni','doi_col'],inplace=True)
+    if args.drop_doi_source_cols:
+        df.drop(columns=['doi_ipni','doi_col'],inplace=True)
 
     # Add epublished flag
     mask = df.remarks.notnull()

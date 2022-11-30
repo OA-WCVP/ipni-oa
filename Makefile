@@ -168,6 +168,12 @@ data/si-table-publ-%.md: buildpublsitable.py data/ipni-oatrend-publ-%.txt resour
 buildpublsitable: data/si-table-publ-all.md
 ###############################################################################
 
+# Build YAML
+data/article-variables.yaml: ipninameoastatus2yaml.py data/ipniname-oastatus.csv
+	$(python_launch_cmd) $^ $@
+buildyaml: data/article-variables.yaml
+###############################################################################
+
 oa_charts_year:=data/ipni-oa-composite.png
 oatrends_charts_publ:=data/ipni-oatrend-publ-all.png data/ipni-oatrend-publ-2019-2021.png data/ipni-oatrend-publ-2019.png
 
@@ -175,12 +181,13 @@ wcvp_reports:= data/ipniname-oastatus-wcvp-report-1.csv data/ipniname-oastatus-w
 
 si_tables:= data/si-table-publ-all.md data/si-table-publ-2019.md data/si-table-publ-2019-2021.md
 
-all: $(oa_charts_year) $(oatrends_charts_publ) $(wcvp_reports) $(si_tables)
+yaml:= data/article-variables.yaml
+all: $(oa_charts_year) $(oatrends_charts_publ) $(wcvp_reports) $(si_tables) $(yaml)
 
 data_archive_zip:=$(shell basename $(CURDIR))-data.zip
 downloads_archive_zip:=$(shell basename $(CURDIR))-downloads.zip
 
-archive: $(oa_charts_year) $(oatrends_charts_publ) $(wcvp_reports) $(si_tables)
+archive: $(oa_charts_year) $(oatrends_charts_publ) $(wcvp_reports) $(si_tables) $(yaml)
 	mkdir -p archive	
 	echo "Archived on $(date_formatted)" >> data/archive-info.txt
 	zip archive/$(data_archive_zip) data/archive-info.txt data/* -r
