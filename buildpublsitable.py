@@ -24,19 +24,33 @@ def main():
     
     # 1.1 Publications report
     df = pd.read_csv(args.inputfile_publ_report, sep=args.delimiter, nrows=args.limit)
-    df = df.replace({np.nan:None})
+    df = df.replace({np.nan:None,'nan':None})
 
     # 1.2 Publication URLS
-    df_url = pd.read_csv(args.inputfile_publ_urls, sep=args.delimiter, nrows=args.limit)
-    df_url = df_url.replace({np.nan:None})
-
+    df_url = pd.read_csv(args.inputfile_publ_urls, sep=args.delimiter, nrows=args.limit,keep_default_na=False,na_values=[''])
+    df_url = df_url.replace({np.nan:None,'nan':None})
+    
     ###########################################################################
     # 2. Assign URLs
     ###########################################################################
     df = pd.merge(left=df,right=df_url,left_on='linkedPublication.abbreviation',right_on='linkedPublication.abbreviation',how='left')
 
     ###########################################################################
-    # 3. Save data to outputfile
+    # 3. Set user friendly column names
+    ###########################################################################
+    column_names = {'linkedPublication.abbreviation':'Abbreviation',
+       'journal_issns':'ISSN',
+       'bibjson.oa_start':'Open access since',
+       'bibjson.apc.has_apc':'Has APC',
+       'bibjson.apc.max':'APC cost', 
+       'url':'Link'}
+    df = df[column_names.keys()]
+    df.rename(columns=column_names,inplace=True)
+    # Replace nans
+    df.fillna('', inplace=True)
+
+    ###########################################################################
+    # 4. Save data to outputfile
     ###########################################################################
     daterange = args.daterange
     if args.daterange == 'all':
