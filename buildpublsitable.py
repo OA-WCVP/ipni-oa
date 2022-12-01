@@ -29,7 +29,11 @@ def main():
     # 1.2 Publication URLS
     df_url = pd.read_csv(args.inputfile_publ_urls, sep=args.delimiter, nrows=args.limit,keep_default_na=False,na_values=[''])
     df_url = df_url.replace({np.nan:None,'nan':None})
-    
+
+    # 1.3 Better formatting for ISSNs
+    mask = df['journal_issns'].notnull()
+    df.loc[mask,'journal_issns'] = df[mask]['journal_issns'].apply(lambda x: x.replace(',','\n'))
+
     ###########################################################################
     # 2. Assign URLs
     ###########################################################################
@@ -38,6 +42,9 @@ def main():
     ###########################################################################
     # 3. Set user friendly column names
     ###########################################################################
+    mask = df['bibjson.oa_start'].notnull()
+    df.loc[mask,'bibjson.oa_start'] = df[mask]['bibjson.oa_start'].apply(lambda x: str(int(x)))
+
     column_names = {'linkedPublication.abbreviation':'Abbreviation',
        'journal_issns':'ISSN',
        'bibjson.oa_start':'Open access since',
@@ -55,10 +62,12 @@ def main():
     daterange = args.daterange
     if args.daterange == 'all':
          daterange = DEFAULT_DATE_RANGE
+    
     title='## Publications covering 80% of nomenclatural act dataset ({})'.format(daterange)
     with open(args.outputfile, 'w', encoding='utf8') as f:
-        f.write(title+'\n\n')
-        df.to_markdown(f, index=False, mode='a')
+        f.write(title+'\n\n<font size="1">\n\n')
+        df.to_markdown(f, index=False, tablefmt="grid", mode='a')
+        f.write('\n\n</font>\n\n')
 
 if __name__ == "__main__":
     main()
