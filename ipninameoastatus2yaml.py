@@ -56,14 +56,29 @@ def main():
     # Calculate total number of nomenclatural acts
     output_variables['nomenclatural_act_total'] = len(df)
 
+    # Calculate total number of nomenclatural acts that are undiscoverable
+    mask = (df.is_oa.isnull())
+    output_variables['nomenclatural_act_undiscoverable_total'] = len(df[mask])
+    output_variables['nomenclatural_act_undiscoverable_pc'] = round(len(df[mask])/len(df)*100)
+
+    # Calculate total number of nomenclatural acts that are open
+    mask = (df.is_oa.notnull()&df.is_oa)
+    output_variables['nomenclatural_act_open_total'] = len(df[mask])
+    output_variables['nomenclatural_act_open_pc'] = round(len(df[mask])/len(df)*100)
+
+    # Calculate total number of nomenclatural acts that are undiscoverable
+    mask = (df.is_oa.notnull()&(df.is_oa==False))
+    output_variables['nomenclatural_act_closed_total'] = len(df[mask])
+    output_variables['nomenclatural_act_closed_pc'] = round(len(df[mask])/len(df)*100)
+
     # Calculate total number of publications examined
     output_variables['publications_total'] = len(df.publicationId.unique())
 
     # Calculate mean number of publications examined each year
-    output_variables['publications_annual_mean'] = str(mean(df.groupby('publicationYear').agg({'publicationId':'nunique'})['publicationId'].values))
+    output_variables['publications_annual_mean'] = round(mean(df.groupby('publicationYear').agg({'publicationId':'nunique'})['publicationId'].values))
     
     # Calculate fraction of names published in serials
-    output_variables['nomenclatural_act_proportion_in_serial'] = (len(df[df.publ_type=='serial'])/len(df))*100
+    output_variables['nomenclatural_act_proportion_in_serial'] = round((len(df[df.publ_type=='serial'])/len(df))*100)
 
     # Calculate GLOVAP count
     publ_abbrev_glovap='Global Fl.'
