@@ -71,6 +71,15 @@ def main():
     output_variables['nomenclatural_act_closed_total'] = len(df[mask])
     output_variables['nomenclatural_act_closed_pc'] = round(len(df[mask])/len(df)*100)
 
+    # Calculate annual percentage of OA acts
+    dfg = pd.merge(left=df.groupby('publicationYear').size().to_frame('act_count'),
+                    right=df[df.is_oa.notnull()&df.is_oa].groupby('publicationYear').size().to_frame('oa_count'),
+                    left_index=True,
+                    right_index=True,
+                    how='inner')
+    dfg['yearly_pc']=(dfg.oa_count / dfg.act_count)*100
+    output_variables['oa_annual_pc_avg'] = round(mean(dfg.yearly_pc.values))
+
     # Calculate total number of publications examined
     output_variables['publications_total'] = len(df.publicationId.unique())
 
