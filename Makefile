@@ -1,7 +1,6 @@
 year_min = 2012
 year_max = 2021
-wcvp_name_url=https://www.dropbox.com/s/pkpv3tc5v9k0thh/wcvp_names.txt?dl=0
-wcvp_dist_url=https://www.dropbox.com/s/9vefyzzp978m2f1/wcvp_distribution.txt?dl=0
+wcvp_zip_url=http://sftp.kew.org/pub/data-repositories/WCVP/Special_Issue_28_Feb_2022/wcvp_names_and_distribution_special_issue_28_feb_2022.zip
 ipni_coldp_url=https://zenodo.org/record/7208700/files/rdmpage/ipni-coldp-2022-10-15.zip?download=1
 
 python_launch_cmd=python
@@ -18,13 +17,15 @@ limit_args=
 filter_args=--filter_ids=77103635-1
 filter_args=
 
-downloads/wcvp_names.txt:
+downloads/wcvp.zip:
 	mkdir -p downloads
-	wget -O $@ $(wcvp_name_url)
+	wget -O $@ $(wcvp_zip_url)
 
-downloads/wcvp_distributions.txt:
-	mkdir -p downloads
-	wget -O $@ $(wcvp_dist_url)
+downloads/wcvp_names.txt: downloads/wcvp.zip
+	unzip -p $^  wcvp_names.txt >$@
+
+downloads/wcvp_distribution.txt: downloads/wcvp.zip
+	unzip -p $^  wcvp_distribution.txt >$@
 
 downloads/ipninames.csv: getipninames.py data/ipni-coldp-dois.tsv
 	mkdir -p downloads
@@ -82,7 +83,7 @@ data/oastatus2repositories.csv: oastatus2repositories.py data/ipniname-oastatus.
 getrepositories: data/oastatus2repositories.csv
 ###############################################################################
 
-data/ipniname-oastatus-wcvp.txt: addwcvp.py data/ipniname-oastatus.csv downloads/wcvp_names.txt downloads/wcvp_distributions.txt
+data/ipniname-oastatus-wcvp.txt: addwcvp.py data/ipniname-oastatus.csv downloads/wcvp_names.txt downloads/wcvp_distribution.txt
 	mkdir -p data
 	$(python_launch_cmd) $^ $(limit_args) $@
 
