@@ -77,8 +77,9 @@ def main():
     # 2.3.2 Pivot table to get a column per Open access (T, F or n/a), values are totals
     dfg = dfg[[groupcol,'Open access','n']].pivot_table(index=groupcol,columns='Open access',values='n')
     dfg.columns = dfg.columns.get_level_values('Open access')
-    oas=['True','False',na_label]
-    dfg = dfg[oas]
+    dfg = dfg[['True','False',na_label]]
+    oas = ['Open', 'Closed', na_label]
+    dfg.columns = oas
     # Add total
     dfg['total']=dfg.sum(axis=1)
 
@@ -98,12 +99,12 @@ def main():
     # 3. Plot and save figure to outputfile
     ###########################################################################
     
-    colour_mapper = {'True':'#ffffff','False':'#c5c5c5', na_label:'#000000'}
+    colour_mapper = {'Open':'#ffffff','Closed':'#c5c5c5', na_label:'#000000'}
     colours = [colour_mapper[oa] for oa in oas]
     
-    figsize=(8,12) # default is mpl.rcParams["figure.figsize"]
+    figsize=(8,10) # default is mpl.rcParams["figure.figsize"]
     fig, axes = plt.subplots(1,1)
-    dfg.sort_values(by='total',ascending=True)[['True','False',na_label]].plot(kind='barh', stacked=True, linewidth=1, edgecolor='k', color=colours, figsize=figsize,ax=axes)
+    dfg.sort_values(by='total',ascending=True)[['Open','Closed',na_label]].plot(kind='barh', stacked=True, linewidth=1, edgecolor='k', color=colours, figsize=figsize,ax=axes)
     plt.legend(title='Open access', loc='lower right')
     plt.xlabel("Number of nomenclatural acts")
     
