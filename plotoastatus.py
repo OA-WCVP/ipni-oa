@@ -5,6 +5,15 @@ pd.set_option('display.max_rows',200)
 import numpy as np
 import matplotlib.pyplot as plt
 
+na_label = 'non-discoverable'
+value_column = dict()
+value_column['takeup'] = 'Open access takeup'
+value_column['status'] = 'Open access status'
+
+value_list = dict()
+value_list['takeup'] = ['open','closed',na_label]
+value_list['status'] = ['green','gold','hybrid','bronze','closed']
+
 def main():
     parser = argparse.ArgumentParser()
     
@@ -52,7 +61,6 @@ def main():
     #     df.drop(df[df.is_oa.isnull()].index,inplace=True)
 
     # 2.1 Add placeholder for NULL values in is_oa and oa_status fields
-    na_label = 'no-doi'
     df['is_oa'] = df['is_oa'].map({True: 'open', False: 'closed'})  
     df.is_oa.fillna(na_label,inplace=True)
     df.oa_status.fillna(na_label,inplace=True)
@@ -94,6 +102,10 @@ def main():
             ax.set_ylabel("Number of nomenclatural acts")
         ax.set_title("Open access {}".format(plottype))
         ax.set_xlabel("Year")
+    
+    handles, labels = axes[0].get_legend_handles_labels()
+    axes[0].legend(handles[::-1], labels[::-1], title=None, loc='best',framealpha=0)
+
     if args.plottype == 'composite':
         plt.suptitle("Open access in IPNI monitored nomenclatural acts ({}-{})".format(args.year_min,args.year_max))
     plt.tight_layout()
@@ -102,14 +114,6 @@ def main():
     # 3. Save figure to outputfile
     ###########################################################################
     plt.savefig(args.outputfile)
-
-value_column = dict()
-value_column['takeup'] = 'Open access takeup'
-value_column['status'] = 'Open access status'
-
-value_list = dict()
-value_list['takeup'] = ['open','closed','no-doi']
-value_list['status'] = ['green','gold','hybrid','bronze','closed']
 
 def reshape_and_plot(df, ax, plottype, plot_percentage):
     # 2.3 Reshape data - pivot
@@ -129,7 +133,7 @@ def reshape_and_plot(df, ax, plottype, plot_percentage):
         df_plot.drop(columns='total',inplace=True)
         df_plot = df_plot*100
 
-    colour_mapper = {'open':'#ffffff','green':'#79be78','gold':'#fde769','hybrid':'#feb352','bronze':'#d29766','closed':'#c5c5c5', 'no-doi':'#000000'}
+    colour_mapper = {'open':'#ffffff','green':'#79be78','gold':'#fde769','hybrid':'#feb352','bronze':'#d29766','closed':'#c5c5c5', na_label:'#000000'}
     colours = [colour_mapper[value] for value in values_as_columns]
     df_plot.plot(kind='bar', stacked=True, linewidth=1, edgecolor='k', color=colours, ax=ax,label=None)
 
