@@ -80,7 +80,7 @@ def main():
     plt.xlabel(area_name_column.capitalize())
     plt.xticks(rotation=45, ha='right')
     plt.tight_layout()
-    plt.savefig(args.outputfile)
+    plt.savefig(args.outputfile, dpi=300)
 
 
 if __name__ == "__main__":

@@ -72,7 +72,7 @@ def main():
     plt.title("Numbers of nomenclatural acts by publication type")
     plt.xlabel("Year")
     plt.tight_layout()
-    plt.savefig(args.outputfile)
+    plt.savefig(args.outputfile, dpi=300)
 
 if __name__ == "__main__":
     main()

@@ -113,7 +113,7 @@ def main():
     ###########################################################################
     # 3. Save figure to outputfile
     ###########################################################################
-    plt.savefig(args.outputfile)
+    plt.savefig(args.outputfile, dpi=300)
 
 def reshape_and_plot(df, ax, plottype, plot_percentage):
     # 2.3 Reshape data - pivot

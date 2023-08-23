@@ -115,7 +115,7 @@ def main():
     plt.suptitle(title)
     plt.ylabel('Publication', rotation=0)
     plt.tight_layout()
-    plt.savefig(args.outputfile_chart)
+    plt.savefig(args.outputfile_chart, dpi=300)
 
     dfg = pd.merge(left=dfg,right=df[['linkedPublication.id','publication_label']+publ_cols+doaj_cols].drop_duplicates(),left_on='publication_label',right_on='publication_label',how='inner')
     output_cols = ['linkedPublication.id','linkedPublication.abbreviation',	'linkedPublication.title',	'linkedPublication.issn',	'linkedPublication.remarks',	'journal_issns', 'bibjson.title',	'bibjson.oa_start',	'bibjson.ref.journal',	'bibjson.apc.has_apc',	'bibjson.apc.max']
