@@ -44,6 +44,7 @@ downloads/rdmpage-ipni-coldp-8fe9cb4/references.tsv: downloads/ipni-coldp-2022-1
 	unzip -p $^  rdmpage-ipni-coldp-8fe9cb4/references.tsv >$@
 
 data/ipni-coldp-dois.tsv: backfilldois.py downloads/rdmpage-ipni-coldp-8fe9cb4/names.tsv downloads/rdmpage-ipni-coldp-8fe9cb4/references.tsv
+	mkdir -p data
 	$(python_launch_cmd) $^ $(limit_args) $@
 
 
